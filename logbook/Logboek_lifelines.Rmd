@@ -1,0 +1,254 @@
+---
+title: "Logboek Lifelines"
+author: "Jarno Jacob Duiker"
+date: "2024-11-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(shiny)
+library(dplyr)
+library(psych)
+library(ggplot2)
+library(hexbin)
+library(RColorBrewer)
+```
+
+19-nov-2024
+
+```{r pressure, echo=FALSE}
+
+data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
+
+head(data_lifelines)
+```
+20-nov-2024
+
+
+
+**(T = time stamp)**
+
+```{r}
+summary(data_lifelines)
+```
+
+```{r}
+#ik gebruik hier describe om verschillende statistieken te bekijken van mijn data dit komt uit de psych package.
+describe(data_lifelines)
+```
+
+Here I use describe, it says the following things.
+
+vars notes the variable index.
+
+n is the number of values.
+
+mean is the average.
+
+sd is the standard deviation.
+
+median is the middle value.
+
+trimmed is the mean after trimming 10% of the observations from each tail.
+
+mad is the median of the absolute deviation.
+
+min and max are the minimum and maximum values.
+
+range is the difference between the maximum and the minimum.
+
+skew is the skewness of the distribution. (between -1 & +1 is perfect between -2 and +2 is acceptable) Hair, J.F., Hult, G.T.M., Ringle, C.M., & Sarstedt, M. (2022). A Primer on Partial Least Squares Structural Equation Modeling (PLS-SEM) (3 ed.). Thousand Oaks, CA: Sage.
+
+kurtosis is the measure of the 'tailiness' of the distribution.
+
+se is the standard error.
+
+*DATA ANALYSIS* The headers need to be changed because it is now unreadable without a codebook, There are many NA's between measurements. Furthermore, the csv can be loaded well and there are no problems with it.
+
+-   
+
+*Friesland postalcode 8388 - 9299 + 9850 - 9859*
+
+```{r}
+friesland_zipcodes <- c(
+  8401:8409, 8411:8417, 8421:8429, 8431:8439, 8441:8449,
+  8451:8459, 8461:8469, 8471:8479, 8481:8489, 8491:8499,
+  8501:8509, 8511:8519, 8521:8529, 8531:8539, 8541:8549,
+  8551:8559, 8561:8569, 8571:8579, 8581:8589, 8591:8599,
+  8601:8609, 8611:8619, 8621:8629, 8631:8639, 8641:8649,
+  8651:8659, 8661:8669, 8671:8679, 8681:8689, 8691:8699,
+  8701:8709, 8711:8719, 8721:8729, 8731:8739, 8741:8749,
+  8751:8759, 8761:8769, 8771:8779, 8781:8789, 8791:8799,
+  8801:8809, 8811:8819, 8821:8829, 8831:8839, 8841:8849,
+  8851:8859, 8861:8869, 8871:8879, 8881:8889, 8891:8899,
+  9001:9009, 9011:9019, 9021:9029, 9031:9039, 9041:9049,
+  9051:9059, 9061:9069, 9071:9079, 9081:9089, 9091:9099,
+  9101:9109, 9111:9119, 9121:9129, 9131:9139, 9141:9149,
+  9151:9159, 9161:9169, 9171:9179, 9181:9189, 9191:9199,
+  9201:9209, 9211:9219, 9221:9229, 9231:9239, 9241:9249,
+  9251:9259, 9261:9269, 9271:9279, 9281:9289, 9291:9299
+)
+
+groningen_zipcodes <- c(
+  2750:2752, 2760:2761, 2811, 2840:2841, 2910:2914,
+  5340:5359, 5366:5368, 5370:5371, 5373, 5386, 5394:5398,
+  9350:9351, 9354:9356, 9359, 9361:9367, 9479, 
+  9500:9503, 9540:9541, 9545, 9550:9551, 9560:9561, 9563, 9566, 
+  9580:9581, 9584:9585, 9591, 9600:9611, 9613:9629, 
+  9631:9633, 9635:9636, 9640:9649, 9651, 9661, 9663, 9665, 
+  9670:9675, 9677:9679, 9681:9688, 9691, 9693, 9695:9704, 
+  9711:9718, 9721:9728, 9731:9738, 9741:9747, 9750:9756, 
+  9771, 9773:9774, 9790:9798, 9800:9805, 9811:9812, 
+  9821:9825, 9827:9828, 9831:9833, 9841:9845, 
+  9860:9866, 9881:9886, 9891:9893, 9900:9915, 
+  9917:9925, 9930:9934, 9936:9937, 9939, 9942:9949, 
+  9951, 9953:9957, 9961:9969, 9970:9999
+)
+
+
+```
+
+
+```{r}
+data_lifelines <- data_lifelines %>%
+    mutate(Province = ifelse(ZIP_CODE %in% friesland_zipcodes, "Friesland", NA))
+
+head(data_lifelines)
+
+
+```
+
+
+```{r}
+GENDER1 <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
+
+ggplot(data_lifelines, aes(x=GENDER1, y=SUMOFALCOHOL, fill=GENDER1)) +
+    geom_boxplot()
+
+```
+```{r}
+
+ggplot(data_lifelines, aes(x=GENDER1, y=SUMOFKCAL, fill=GENDER1)) +
+    geom_boxplot()
+
+```
+26 nov
+```{r}
+ggplot(data_lifelines, aes(x=data_lifelines$WEIGHT_T1, y=data_lifelines$HEIGHT_T1)) +
+    geom_point(alpha= 0.2, size=.2)
+```
+
+```{r}
+ggplot(data_friesland, aes(x=data_friesland$WEIGHT_T1, y=data_friesland$HEIGHT_T1)) +
+    geom_smooth(method = "loess")
+```
+
+```{r}
+ ggplot(data_lifelines, aes(x=data_lifelines$PREGNANCIES)) +
+    geom_bar(fill="#69b3a2", alpha=0.8)
+```
+
+```{r}
+ggplot(data_lifelines, aes(x=data_lifelines$BMI_T1, y = data_lifelines$CHO_T1)) +
+    geom_smooth(method = "loess", formula = 'y ~ x')
+```
+
+
+```{r}
+
+ggplot(data_lifelines, aes(x=data_lifelines$AGE_T1, y=data_lifelines$WEIGHT_T1)) +
+    geom_jitter(alpha= 0.2, size=.2)
+
+```
+27 nov
+making a subset for smokers vs non smokers
+
+```{r}
+
+smokers_lifeline <- subset(data_lifelines, data_lifelines$SMOKING > 0)
+non_smokers_lifeline <- subset(data_lifelines, data_lifelines$SMOKING == 0)
+
+gender_smokers <- smokers_lifeline$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
+
+
+head(gender_smokers)
+
+ggplot(smokers_lifeline, mapping = aes(x=gender_smokers, fill = factor(RESPIRATORY_DISEASE_T1))) + 
+  geom_bar()
+
+```
+
+```{r}
+
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(DEPRESSION_T1))) + 
+  geom_bar()
+
+
+```
+
+```{r}
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(BURNOUT_T1))) + 
+  geom_bar()
+```
+
+
+```{r}
+
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(OSTEOARTHRITIS))) + 
+  geom_bar()
+
+```
+```{r}
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(FINANCE_T1))) + 
+  geom_bar()
+```
+```{r}
+
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(FINANCE_T1))) + 
+  geom_bar()
+
+```
+
+```{r}
+
+
+ggplot(data_lifelines, aes(data_lifelines$SUMOFALCOHOL, FINANCE_T1)) +
+    geom_jitter(width = .5, size=1)
+
+```
+
+```{r}
+
+ggplot(data_lifelines, aes(data_lifelines$SUMOFALCOHOL, data_lifelines$PREGNANCIES)) +
+    geom_jitter(width = .5, size=1)
+
+```
+
+```{r}
+ggplot(data_lifelines, mapping = aes(x=GENDER1, fill = factor(DEPRESSION_T1))) + 
+  geom_bar()
+```
+
+```{r}
+# Create data
+x <- rnorm(mean=1.5, 5000)
+y <- rnorm(mean=1.6, 5000)
+ 
+# Make the plot
+bin<-hexbin(x, y, xbins=40)
+my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+plot(bin, main="" , colramp=my_colors , legend=F )
+```
+
+### data filteren
+
+```{r}
+
+data_lifelines 
+
+```
+

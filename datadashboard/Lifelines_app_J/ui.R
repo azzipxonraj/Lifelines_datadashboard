@@ -25,8 +25,8 @@ fluidPage(theme = shinytheme("readable"),
                tabPanel("Contact & info")),
 
     sidebarPanel(
-        selectInput("dataset", "Choose a dataset:",
-                    choices = c("The Entire North", "Groningen", "Drenthe", "Friesland")),
+        selectInput("area", "Choose a area:",
+                    choices = c("The entire North", "Groningen", "Drenthe", "Friesland")),
         
         
         selectInput("gender", "Choose a Gender:", 
@@ -35,8 +35,7 @@ fluidPage(theme = shinytheme("readable"),
         selectInput("age", "Choose an age range:", 
                     choices = c("All ages", "65+", "30-50", "under 26")),
         
-        selectInput("TBD", "TBD:", 
-                    choices = c("All genders", "Male", "Female"))
+        
     ),
     
     mainPanel(

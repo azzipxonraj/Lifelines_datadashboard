@@ -20,34 +20,42 @@ fluidPage(theme = shinytheme("readable"),
     titlePanel("Data lifelines - Project"),
     
     navbarPage("Lifelines",
-               tabPanel("Dataviewer"),
-               tabPanel("FAQ"),
+               tabPanel("Dataviewer",
+                        sidebarPanel(
+                            checkboxGroupInput(
+                                inputId = "provinces", 
+                                label = "Select provinces to display:", 
+                                choices = c("Groningen", "Drenthe", "Friesland"), 
+                                selected = c("Groningen", "Drenthe", "Friesland") 
+                            ),
+                            
+                            selectInput("gender", "Choose a Gender:", 
+                                        choices = c("All genders", "Male", "Female")),
+                            
+                            selectInput("age", "Choose an age range:", 
+                                        choices = c("All ages", "65+", "30-50", "under 26")),
+                            
+                            selectInput("info", "Choose what u want to see:", 
+                                        choices = c("Participant area", "Sleep quality"))
+                            ),
+                        
+                        mainPanel(
+                            tabsetPanel(
+                                tabPanel("Plot", plotOutput("main_plot", width = "800px")),
+                                tabPanel("Summary", verbatimTextOutput("summary")),
+                                tabPanel("Table", dataTableOutput("Lifelines_example"))
+                            )
+                        ),
+                        
+                        ),
+               
+               tabPanel("FAQ",
+                        h3("Frequently asked questions"),
+                        p("From where does this data come from.")),
+               
                tabPanel("Contact & info")),
 
-    sidebarPanel(
-        selectInput("area", "Choose a area:",
-                    choices = c("The entire North", "Groningen", "Drenthe", "Friesland")),
-        
-        
-        selectInput("gender", "Choose a Gender:", 
-                    choices = c("All genders", "Male", "Female")),
-        
-        selectInput("age", "Choose an age range:", 
-                    choices = c("All ages", "65+", "30-50", "under 26")),
-        
-        
-    ),
     
-    mainPanel(
-        tabsetPanel(
-            tabPanel("Plot", plotOutput("Age_finance", width = "800px")),
-            tabPanel("Summary", verbatimTextOutput("summary")),
-            tabPanel("Table", dataTableOutput("Lifelines_example"))
-        )
-    ),
-
-
-
     
     
 )

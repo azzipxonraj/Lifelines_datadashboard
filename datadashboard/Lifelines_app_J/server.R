@@ -13,8 +13,7 @@ library(dplyr)
 library(DT)
 
 
-# Define server logic required to draw a histogram
-
+# ZIP codes for every province according to wikipedia
 
 friesland_zipcodes <- c(
     8401:8409, 8411:8417, 8421:8429, 8431:8439, 8441:8449,
@@ -65,79 +64,91 @@ drenthe_zipcodes <- c(
     9765:9766, 9780:9785, 9959
 )
 
-
-
+#start the server, give it a function
 server <- function(input, output, session) {  
+    
+    # Reactive function to filter the data
     filtered_data <- reactive({
         
-        # Load the data
+        # Load and prepare data
         data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
-
-        data_lifelines <- data_lifelines %>%
-            mutate(Province = case_when(ZIP_CODE %in% friesland_zipcodes ~ "Friesland", 
-                                        ZIP_CODE %in% groningen_zipcodes ~ "Groningen",
-                                        ZIP_CODE %in% drenthe_zipcodes ~ "Drenthe"))
         
+        # Assign province based on ZIP_CODE
+        data_lifelines <- data_lifelines %>% 
+            mutate(Province = case_when(
+                ZIP_CODE %in% friesland_zipcodes ~ "Friesland",
+                ZIP_CODE %in% groningen_zipcodes ~ "Groningen",
+                ZIP_CODE %in% drenthe_zipcodes ~ "Drenthe",
+                TRUE ~ NA_character_
+            ))
         
-        
-        if (input$area != "The entire North") {
-            if (input$area == "Groningen") {
-                data_lifelines <- data_lifelines %>% filter(Province == "Groningen")
-            } else if (input$area == "Friesland") {
-                data_lifelines <- data_lifelines %>% filter(Province == "Friesland")
-            } else if (input$area == "Drenthe") {
-                data_lifelines <- data_lifelines %>% filter(Province == "Drenthe")
-            }
-        
+        # Filter data based on user input
+        #In this if statement it checks if there's an input with !is.null 
+        # plus the length check as a double check
+        if (!is.null(input$provinces) && length(input$provinces) > 0) {
+            data_lifelines <- data_lifelines %>% 
+                filter(Province %in% input$provinces)
         }
         
-
-        
+        # Using switch instead of if else statements to make the code more readable
+        #If gender input doesnt equal "All genders" filter in data frame will 
+        #look if "Male" is selected and else if "Female is selected" then
+        # based of that pipe to the dataframe what needs to be shown in the gender collum
         if (input$gender != "All genders") {
-            if (input$gender == "Male") {
-                data_lifelines <- data_lifelines %>% filter(GENDER == 1)
-            } else if (input$gender == "Female") {
-                data_lifelines <- data_lifelines %>% filter(GENDER == 2) 
-            }
+            data_lifelines <- data_lifelines %>% 
+                filter(GENDER == switch(input$gender, "Male" = 1, "Female" = 2))
         }
         
         if (input$age != "All ages") {
-            if (input$age == "65+") {
-                data_lifelines <- data_lifelines %>% filter(AGE_T1 >= 65)
-            } else if (input$age == "30-50") {
-                data_lifelines <- data_lifelines %>% filter(between(AGE_T1, 30,50))
-            } else if (input$age == "under 26") {
-                data_lifelines <- data_lifelines %>% filter(AGE_T1 < 26)
-            }
-            
+            data_lifelines <- data_lifelines %>% 
+                filter(
+                    switch(input$age, 
+                           "65+" = AGE_T1 >= 65,
+                           "30-50" = between(AGE_T1, 30, 50),
+                           "under 26" = AGE_T1 < 26,
+                           TRUE
+                    )
+                )
         }
+        
         return(data_lifelines)
     })
-
-    output$Age_finance <- renderPlot({
-        ggplot(filtered_data(), mapping = aes(x=Province, fill = factor(GENDER))) +
-            ylab("Count in people") +
-            labs(fill = "Gender
-                 1 = Male
-                 2 = Female") +
-            xlab("Province's") +
-            theme_minimal() +
-            geom_bar()
-        
+    
+    # Render plot using ggplot the filterd data 
+    output$main_plot <- renderPlot({
+        ggplot(filtered_data(), aes(x = Province, fill = factor(GENDER))) +
+            geom_bar() +
+            ylab("Count of People") +
+            xlab("Province") +
+            labs(fill = "Gender (1 = Male, 2 = Female)") +
+            theme_minimal()
     })
-
+    
+    output$summary <- renderText({
+        "
+        A barplot (or barchart) is one of the most common types of graphic.
+        It shows the relationship between a numeric and a categoric variable. 
+        Each entity of the categoric variable is represented as a bar. 
+        The size of the bar represents its numeric value.
+        A barplot shows the relationship between a numeric and a categoric variable.
+        "
+    })
+    
+    # Render DataTable
     output$Lifelines_example <- renderDataTable({
-        DT::datatable(filtered_data(), 
-                      options = list(pageLength = 10,  # Number of rows per page
-                                     autoWidth = TRUE, 
-                                     searching = TRUE, 
-                                     lengthMenu = c(5, 10, 25, 50, 100)))  # Control how many entries can be displayed
+        DT::datatable(
+            filtered_data(), 
+            options = list(
+                pageLength = 10, 
+                autoWidth = TRUE, 
+                searching = TRUE, 
+                lengthMenu = c(5, 10, 25, 50, 100)
+            )
+        )
     })
+    
+    
 }
-
-    
-
-    
-    #BINSIZE INTERACTIEF MAKEN
+    # more graphs?
     
 

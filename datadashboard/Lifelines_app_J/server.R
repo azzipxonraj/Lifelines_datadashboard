@@ -11,6 +11,8 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(DT)
+library(plotly)
+
 
 
 # ZIP codes for every province according to wikipedia
@@ -104,7 +106,7 @@ server <- function(input, output, session) {
                 filter(
                     switch(input$age, 
                            "65+" = AGE_T1 >= 65,
-                           "30-50" = between(AGE_T1, 30, 50),
+                           "26-65" = between(AGE_T1, 26, 65),
                            "under 26" = AGE_T1 < 26,
                            TRUE
                     )
@@ -114,7 +116,7 @@ server <- function(input, output, session) {
         return(data_lifelines)
     })
     
-    # Render plot using ggplot the filterd data 
+    # Render plot using ggplot the filterd data
     output$main_plot <- renderPlot({
         ggplot(filtered_data(), aes(x = Province, fill = factor(GENDER))) +
             geom_bar() +
@@ -123,6 +125,19 @@ server <- function(input, output, session) {
             labs(fill = "Gender (1 = Male, 2 = Female)") +
             theme_minimal()
     })
+    
+    #Doesnt work yet the way it shows is messed up
+    output$barPlot <- renderPlotly({
+        plot_ly(filtered_data(), x = ~Province, Fill = ~GENDER, type = 'bar', 
+                color = ~GENDER, colors = c('blue', 'pink'),
+                text = ~paste("Count: ", factor(GENDER)), hoverinfo = 'text') %>%
+            layout(title = "Count of People by Province and Gender",
+                   xaxis = list(title = "Province"),
+                   yaxis = list(title = "Count of People"),
+                   barmode = 'stack')
+    })
+
+    
     
     output$summary <- renderText({
         "
@@ -150,5 +165,7 @@ server <- function(input, output, session) {
     
 }
     # more graphs?
+    # add near points function so user can click on graph for info
+
     
 

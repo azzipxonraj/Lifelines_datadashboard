@@ -18,13 +18,19 @@ library(hexbin)
 library(RColorBrewer)
 ```
 
+#Intro
+
+In this project i've been given data from the Lifelines project. This project gave people who lived in the provinces of Drenthe, Groningen and Friesland a questionair that collected data on numerous catagories. These catagories include things like; Weight, Height, Finances, different diseases, different lifestyle choices, differences in social status (financials, degree, etc). These different catagories have been measured in different ways, some are measured according to external rule sets. For example, Data on sleep quality (section: lifestyle and environment) has been reviewed by researchers from the Erasmus MC who have developed a PSQI derivative for the Lifelines cohort. The variable included in the public health dataset is an indicator of people who experience ‘poor sleep quality’. They have given a score back being either 0 meaning bad sleep quality, or a score of 1 meaning good sleep quality. The task at hand will be creating a nice and sleek datadashboard that display's certain catagories that are important. The catagories that we're found to be important in this research will be lifestyle catagories. This will include; METABOLIC_DISORDER, BURNOUT, DEPRESSION, MWK_VAL / SPORTS_T1, SLEEP_QUALITY, SMOKING, SUMOFALCOHOL, SUMOFKCAL, DBP (Diastolic Blood Pressure in mm hg at baseline), HBF (Pulse rate in beats per minute at baseline), FINANCE, BMI, WEIGHT, HEIGHT. These different factors in lifestyle can be viewed in different ways; the datadashboard will have a standard barplot and a interactive barplot these plots can be filtered in different ways through a sidebar. This sidebar will have filters in what provinces are shown, What genders are shown and what age range is show (later financial situation also will be shown). There will be 2 plots a hexbin plot and a barplot (switching between this can be done with a dropdown box). The purpose of this datadashboard is for the user to see what different lifestyles are common in different provinces but also what province is the healthiest or wealthiest this can give them a general idea of what province is benificial for them. It can also influence people to think of certain research that needs to be done. For example if the data shows that the province of Drenthe has an absurd spike in people with lung isues compared to the other provinces it could lead questions about industry and air quality. In this logbook there will be an analysis of the data and a decision about what data to use and what graph to use and how these things will be shown on the data dashboard
+
+###Data analysis, filtering and sorting
+
 19-nov-2024
 
 ```{r pressure, echo=FALSE}
 
 data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
 
-head(data_lifelines)
+head(data_lifelines$Province)
 ```
 20-nov-2024
 
@@ -32,9 +38,7 @@ head(data_lifelines)
 
 **(T = time stamp)**
 
-```{r}
-summary(data_lifelines)
-```
+
 
 ```{r}
 #ik gebruik hier describe om verschillende statistieken te bekijken van mijn data dit komt uit de psych package.
@@ -70,6 +74,9 @@ se is the standard error.
 *DATA ANALYSIS* The headers need to be changed because it is now unreadable without a codebook, There are many NA's between measurements. Furthermore, the csv can be loaded well and there are no problems with it.
 
 -   
+
+###Postal codes 
+Here i've found all postal codes for each province. This is necasary to make a new catagory in the dataframe that shows from what province each participant is. These zipcodes are put in lists. Also the dataframe will be mutated (this is where the new column is made).
 
 *Friesland postalcode 8388 - 9299 + 9850 - 9859*
 
@@ -109,61 +116,95 @@ groningen_zipcodes <- c(
   9951, 9953:9957, 9961:9969, 9970:9999
 )
 
+drenthe_zipcodes <- c(
+  3925, 7705, 7740:7742, 7750:7751, 7753:7756, 7760:7761, 7764:7766, 
+  7800:7801, 7811:7815, 7821:7828, 7830:7831, 7833, 7840:7849, 7851:7856, 
+  7858:7859, 7860:7864, 7871:7877, 7880:7881, 7884:7885, 7887, 7889:7892, 
+  7894:7895, 7900:7918, 7920:7929, 7931:7938, 7940:7944, 7946, 7948:7949, 
+  7957:7958, 7960:7966, 7970:7975, 7980:7986, 7990:7991, 8066, 8325:8326, 
+  8334:8339, 8341:8347, 8351, 8355:8356, 8361:8363, 8371:8378, 8380:8398, 
+  8420:8428, 8430:8435, 8437:8439, 8470:8479, 8481:8489, 9300:9307, 
+  9311:9315, 9320:9321, 9330:9337, 9341:9343, 9351, 9400:9423, 9430:9439, 
+  9441:9449, 9450:9469, 9470:9475, 9480:9489, 9491:9497, 9511:9512, 9514:9515, 
+  9520:9528, 9530:9537, 9564, 9571, 9573:9574, 9654:9659, 9749, 9760:9761, 
+  9765:9766, 9780:9785, 9959
+)
 
-```
+#Here the dataframe is mutated by adding a new column for what province each participant is from. Using case when this works by looking into the ZIP_CODE column what number it is, if its in the friesland_zipcodes it will put down Friesland in the Province column if its not in friesland_zipcodes it will go to the next option.
 
-
-```{r}
 data_lifelines <- data_lifelines %>%
-    mutate(Province = ifelse(ZIP_CODE %in% friesland_zipcodes, "Friesland", NA))
+    mutate(Province = case_when(ZIP_CODE %in% friesland_zipcodes ~ "Friesland", 
+                             ZIP_CODE %in% groningen_zipcodes ~ "Groningen",
+                             ZIP_CODE %in% drenthe_zipcodes ~ "Drenthe"))
 
-head(data_lifelines)
+
+#here the datalifelines is headed and only the province column to see if it worked
+head(data_lifelines$Province)
 
 
 ```
 
 
-```{r}
+```{r, average weekly gram alc per gender}
+#Here i get gender from the dataframe, with the %>% i transform the 1 or 2 option to Male or Female
 GENDER1 <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
 
+#Here i use ggplot to look at the average alcohol consumption per gender in grams
 ggplot(data_lifelines, aes(x=GENDER1, y=SUMOFALCOHOL, fill=GENDER1)) +
-    geom_boxplot()
+    geom_boxplot() +
+    ylab("Sum of alcohol per week in grams") +
+    xlab("Gender") +
+    labs(title="How many grams of alchol does each gender average per week")
 
 ```
+In this boxplot you can see that men average more gram of alochol per week then females do, however it's not such a significante difference that it's something to show in the datadashboard. 
+
+
 ```{r}
 
 ggplot(data_lifelines, aes(x=GENDER1, y=SUMOFKCAL, fill=GENDER1)) +
-    geom_boxplot()
+    geom_boxplot() +
+    xlab("Gender") +
+    ylab("Sum of kcal - per day") +
+    labs(title = "Sum of kcal - per day, per gender")
 
 ```
-26 nov
-```{r}
-ggplot(data_lifelines, aes(x=data_lifelines$WEIGHT_T1, y=data_lifelines$HEIGHT_T1)) +
-    geom_point(alpha= 0.2, size=.2)
-```
+Here is a boxplot of the sum of kcal for each gender per day. As expected the average for men is around 2300-2400 and the average for females is around 1800-1900. Something notable is that there are no males that have a extreme low kcal when there are females that eat 0 or close to 0 kcal each day. This however could be a randomisation error. This is because to keep the data private the lifelines project
 
+####26 nov
 ```{r}
-ggplot(data_friesland, aes(x=data_friesland$WEIGHT_T1, y=data_friesland$HEIGHT_T1)) +
-    geom_smooth(method = "loess")
+ggplot(data_lifelines, aes(x=WEIGHT_T1, y=HEIGHT_T1)) +
+    geom_point(alpha= 0.2, size=.2) +
+    xlab("Weight on measuring moment 1 (in KG)") +
+    ylab("Height in cm") +
+    labs(title = "Length and weight scatterplot")
+    
 ```
-
-```{r}
- ggplot(data_lifelines, aes(x=data_lifelines$PREGNANCIES)) +
-    geom_bar(fill="#69b3a2", alpha=0.8)
-```
-
-```{r}
-ggplot(data_lifelines, aes(x=data_lifelines$BMI_T1, y = data_lifelines$CHO_T1)) +
-    geom_smooth(method = "loess", formula = 'y ~ x')
-```
+In this scatterplot the height and weight is show in a scatterplot. due to the large amount of data the points had to become quite small and the alpha has been changed to very light. this plot does show a general area where the dots are. This is between 60-100kg and 150 and 190 cm. This plot is not very interesting and therefore will not be shown in the datadashboard.
 
 
 ```{r}
+ ggplot(data_lifelines, aes(x= PREGNANCIES)) +
+    geom_bar(fill="#69b3a2", alpha=0.8) +
+    xlab("Prengnancies") +
+    labs(title = "How many pregnancies do women have")
+```
+In the lifelines form women have been asked how many pregnancies women had, this is displayed here. It seems like the most common thing is to have 2 pregnancies or two children then 3 then 0. This seems quite common and not necesarly notable for the dashboard.
 
-ggplot(data_lifelines, aes(x=data_lifelines$AGE_T1, y=data_lifelines$WEIGHT_T1)) +
-    geom_jitter(alpha= 0.2, size=.2)
+
+
+
+```{r}
+
+ggplot(data_lifelines, aes(x=AGE_T1, y=WEIGHT_T1)) +
+    geom_jitter(alpha= 0.2, size=.2)+
+    ylab("Weight on measuring moment 1 (in KG)") +
+    xlab("age") +
+    labs(title = "Age and weight scatterplot")
 
 ```
+In this scatterplot the weight and age are being compared and there is not a notable spike or difference in the ages. the only thing i see is allot of data points near the 50 yr age point but this is due to most contestants being this age.
+
 27 nov
 making a subset for smokers vs non smokers
 
@@ -178,53 +219,99 @@ gender_smokers <- smokers_lifeline$GENDER %>% factor(levels = c(1,2), labels = c
 head(gender_smokers)
 
 ggplot(smokers_lifeline, mapping = aes(x=gender_smokers, fill = factor(RESPIRATORY_DISEASE_T1))) + 
-  geom_bar()
+  geom_bar() +
+    xlab("Gender") +
+    ylab("Count of people") +
+    labs(title = "Smoker's and non smokers for each gender", fill = "Smoking
+         0 = Non-smoker
+         1 = Smoker")
 
 ```
+In this barplot the smokers per gender is shown. Interestingly there are a lot less smokers then expected. less then 250! This could be intersting to compare the ammount of smokers with the ammount of lung problems.
+
+```{r}
+data_lifelines_gender <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
+
+ggplot(data_lifelines, mapping = aes(x=Province, fill = factor(data_lifelines_gender))) + 
+  geom_bar()+
+    xlab("Gender") +
+    ylab("Count of people") +
+    labs(title = "Genders per province", fill = "Gender
+         Red = Male
+         Blue = Female")
+```
+Here is a plot shown that shows the distrubution of male and female per province. This graph is nice and could be a goodfit on the datadashboard. This graph can display difference between male and female well when the datadashboard is filtered by a filter function.
+
 
 ```{r}
 
 ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(DEPRESSION_T1))) + 
-  geom_bar()
+  geom_bar()+
+    xlab("Age") +
+    ylab("Count of people") +
+    labs(title = "This graph shows if people have depression shown by age", fill = "Depression
+         0 = Not depressed
+         1 = depressed")
 
 
 ```
-
+This graph shows the depression per age, it is hard to say something about the depression this is because there are way more awnsers in the 30-50 range so comparing it will be hard. depression definitly has a place on the datadashboard but not in this graph.
 ```{r}
 ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(BURNOUT_T1))) + 
-  geom_bar()
+  geom_bar()+
+    xlab("Age") +
+    ylab("Count of people") +
+    labs(title = "This graph shows if people have a burnout shown by age", fill = "Burnout
+         0 = Not Burned out
+         1 = In a burnout")
 ```
-
+As the previous graph this shows burnout by age, it seems that the people who get burnouts start at 30 and they are quite high between 30-50 meaning that the stress that people are getting pre 30 years old is not enough to cause a burnout. This deffinitly could be a plot that should be shown on the datadashboard.
 
 ```{r}
 
 ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(OSTEOARTHRITIS))) + 
-  geom_bar()
+  geom_bar() +
+    xlab("Age") +
+    ylab("Count of people") +
+    labs(title = "This graph shows if people have depression shown by age", fill = "osteoarthirittis
+         0 = doesn't have osteoarthirittis
+         1 = does have osteoarthirittis")
 
 ```
+Osteoarthritis is a degenerative joint disease, in which the tissues in the joint break down over time. It is the most common type of arthritis and is more common in older people. People with osteoarthritis usually have joint pain and, after rest or inactivity, stiffness for a short period of time. In this plot the peak in the 50 years can be ignored this is because there is almost triple the awnsers for it compared to the next ages. However it is shown that this joint disease is indeed more prominent in the older people. This confirms what is said so is not a very interisting plot but we could show a plot per province to see what the difference is between them.
+
 ```{r}
 ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(FINANCE_T1))) + 
-  geom_bar()
-```
-```{r}
-
-ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(FINANCE_T1))) + 
-  geom_bar()
-
-```
-
-```{r}
-
-
-ggplot(data_lifelines, aes(data_lifelines$SUMOFALCOHOL, FINANCE_T1)) +
-    geom_jitter(width = .5, size=1)
+  geom_bar() +
+    xlab("Age") +
+    ylab("Count of people") +
+    labs(title = "This graph shows the financial situation per age", fill = "Finance situatio
+         1 = worst
+         10 = best (3500$+ a month)")
 
 ```
+This plot shows the financial situation per age, This plot is kind of difficult also because of the big difference between count between 50 and 50+ this finance will be good to show in correlation with other lifestyle factors but this plot in perticular is not interesting enough
+
+
 
 ```{r}
 
-ggplot(data_lifelines, aes(data_lifelines$SUMOFALCOHOL, data_lifelines$PREGNANCIES)) +
-    geom_jitter(width = .5, size=1)
+
+ggplot(data_lifelines, aes(SUMOFALCOHOL, FINANCE_T1)) +
+    geom_jitter(width = .5, size=1) +
+    xlab("Gram of alc per week") +
+    ylab("Financial situation") +
+    labs(title = "This plot shows the financial situation and alcohol in gram per week")
+
+```
+This plot shows how many grams of alcohol per week is getting drank and how the subjects financial situation is. It is not a really note worthy plot in my opinion so this will not be used in the final datadashboard.
+```{r}
+
+ggplot(data_lifelines, aes(SUMOFALCOHOL, PREGNANCIES)) +
+    geom_jitter(width = .5, size=1) +
+    xlab("Age") +
+    ylab("Count of people") +
+    labs(title = "This plot shows the financial situation and alcohol in gram per week")
 
 ```
 
@@ -243,12 +330,64 @@ bin<-hexbin(x, y, xbins=40)
 my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
 plot(bin, main="" , colramp=my_colors , legend=F )
 ```
+A hexbin plot is useful to represent the relationship of 2 numerical variables when you have a lot of data points. Without overlapping of the points, the plotting window is split into several hexbins.
 
-### data filteren
+## CODE REVIEUW
 
-```{r}
 
-data_lifelines 
 
-```
+Introduction needs to be added to the logbook, this needs to include things like what this logbook will be about what the project is what catagories will be focussed on and why
+
+Remove unnescerary folders
+
+Explain what im doing and why.
+
+Further the analysis meaning the explenations with every graph
+
+Choose summary or describe - take the variabells out the datatable that arent intressting for this project
+
+Make a table of contents (This could be done with the rmarkdown header)
+
+Critical look at the results that come from the analysis and what is noticable from them and what is different from what was expected
+
+Use hexbin for the data weight and length - make sure a good explenation is present because it is a hartplot to understand
+
+Maybe put the postal codes in a sepperate file.
+
+Balloon plot - this plot could be usefull for the alcohol and finance showcase
+
+Chunk headers then it is easier to see where code fails and also figure numbers
+
+
+Library here usage for the path fix
+
+UTILS research
+
+### backend comments
+
+You can never overwrite the original data you always make a filtered copy
+
+subset from the data with the wanted catagories so the table isnt this big
+
+## Plan for datadashboard
+
+The plan for the datadashboard will be to make the user able to filter the data. The data can be filterd in 3 ways; gender, what provinces should be shown and what age range should be shown. Then the user can select a plot. These plots will be preselected by me and it will show a couple of lifestyle factors i have selected.
+
+- METABOLIC_DISORDER T1/T2
+- BURNOUT
+- DEPRESSION
+- MWK_VAL / SPORTS_T1
+- SLEEP_QUALITY
+- SMOKING
+- SUMOFALCOHOL
+- SUMOFKCAL
+- DBP T1/T2 (Diastolic Blood Pressure in mm hg at baseline)
+- HBF T1/T2 (Pulse rate in beats per minute at baseline)
+- FINANCE
+- BMI T1/T3
+- WEIGHT T1/T3
+- HEIGHT T1/T3
+
+i found that these catagories would be interesting at first, then i looked at the different graphs in the analysis above and it showed me that it's very important to have a good way to visualize these. That being said some stuff also appeared less intersting like bmi weight and height this is because almost every data about provinces shows this. Thus making it not that interesting. Smoking, depression burnout and sum of alcohol could be interesting though. This will show what province best is for example for the least stress in context of a burnout.
+
 

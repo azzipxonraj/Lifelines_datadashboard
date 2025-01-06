@@ -128,8 +128,8 @@ server <- function(input, output, session) {
     
     #Doesnt work yet the way it shows is messed up
     output$barPlot <- renderPlotly({
-        plot_ly(filtered_data(), x = ~Province, Fill = ~GENDER, type = 'bar', 
-                color = ~GENDER, colors = c('blue', 'pink'),
+        plot_ly(filtered_data(), x = ~Province, type = 'bar', 
+                color = ~factor(GENDER), colors = c('blue', 'pink'),
                 text = ~paste("Count: ", factor(GENDER)), hoverinfo = 'text') %>%
             layout(title = "Count of People by Province and Gender",
                    xaxis = list(title = "Province"),
@@ -145,7 +145,6 @@ server <- function(input, output, session) {
         It shows the relationship between a numeric and a categoric variable. 
         Each entity of the categoric variable is represented as a bar. 
         The size of the bar represents its numeric value.
-        A barplot shows the relationship between a numeric and a categoric variable.
         "
     })
     

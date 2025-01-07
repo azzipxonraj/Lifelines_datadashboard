@@ -36,7 +36,7 @@ fluidPage(
                                         choices = c("All genders", "Male", "Female")),
                             
                             selectInput("age", "Choose an age range:", 
-                                        choices = c("All ages", "65+", "30-50", "under 26")),
+                                        choices = c("All ages", "65+", "26-65", "under 26")),
                             
                             selectInput("info", "Choose what u want to see:", 
                                         choices = c("Participant area", "Sleep quality"))

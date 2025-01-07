@@ -75,8 +75,10 @@ server <- function(input, output, session) {
         # Load and prepare data
         data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
         
+        data_filterd <- data_lifelines
+        
         # Assign province based on ZIP_CODE
-        data_lifelines <- data_lifelines %>% 
+        data_filterd <- data_filterd %>% 
             mutate(Province = case_when(
                 ZIP_CODE %in% friesland_zipcodes ~ "Friesland",
                 ZIP_CODE %in% groningen_zipcodes ~ "Groningen",
@@ -88,7 +90,7 @@ server <- function(input, output, session) {
         #In this if statement it checks if there's an input with !is.null 
         # plus the length check as a double check
         if (!is.null(input$provinces) && length(input$provinces) > 0) {
-            data_lifelines <- data_lifelines %>% 
+            data_filterd <- data_filterd %>% 
                 filter(Province %in% input$provinces)
         }
         
@@ -97,12 +99,12 @@ server <- function(input, output, session) {
         #look if "Male" is selected and else if "Female is selected" then
         # based of that pipe to the dataframe what needs to be shown in the gender collum
         if (input$gender != "All genders") {
-            data_lifelines <- data_lifelines %>% 
+            data_filterd <- data_filterd %>% 
                 filter(GENDER == switch(input$gender, "Male" = 1, "Female" = 2))
         }
         
         if (input$age != "All ages") {
-            data_lifelines <- data_lifelines %>% 
+            data_filterd <- data_filterd %>% 
                 filter(
                     switch(input$age, 
                            "65+" = AGE_T1 >= 65,
@@ -113,7 +115,7 @@ server <- function(input, output, session) {
                 )
         }
         
-        return(data_lifelines)
+        return(data_filterd)
     })
     
     # Render plot using ggplot the filterd data

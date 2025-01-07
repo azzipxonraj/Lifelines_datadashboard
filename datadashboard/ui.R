@@ -39,7 +39,7 @@ fluidPage(
                                         choices = c("All ages", "65+", "26-65", "under 26")),
                             
                             selectInput("info", "Choose what u want to see:", 
-                                        choices = c("Participant area", "Sleep quality"))
+                                        choices = c("Participant area", "Sleep quality", "Weight and bloodpressure T1"))
                         ),
                         
                         mainPanel(

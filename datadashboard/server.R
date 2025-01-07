@@ -66,15 +66,18 @@ drenthe_zipcodes <- c(
     9765:9766, 9780:9785, 9959
 )
 
+data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
+
+
 #start the server, give it a function
 server <- function(input, output, session) {  
     
+
     # Reactive function to filter the data
     filtered_data <- reactive({
         
         # Load and prepare data
-        data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
-        
+
         data_filterd <- data_lifelines
         
         # Assign province based on ZIP_CODE
@@ -118,15 +121,34 @@ server <- function(input, output, session) {
         return(data_filterd)
     })
     
-    # Render plot using ggplot the filterd data
+
+    
     output$main_plot <- renderPlot({
-        ggplot(filtered_data(), aes(x = Province, fill = factor(GENDER))) +
-            geom_bar() +
-            ylab("Count of People") +
-            xlab("Province") +
-            labs(fill = "Gender (1 = Male, 2 = Female)") +
-            theme_minimal()
+        if (input$info == "Sleep quality") {
+            data_sleepqual_dbp <- na.omit(filtered_data())
+            ggplot(data_sleepqual_dbp, aes(x = factor(SLEEP_QUALITY), y = DBP_T1)) +
+                geom_violin() +
+                xlab("Sleep quality") +
+                ylab("DBP (mm hg)") +
+                theme_minimal()
+        } else if (input$info == "Participant area") {
+            ggplot(filtered_data(), aes(x = Province, fill = factor(GENDER))) +
+                geom_bar() +
+                ylab("Count of People") +
+                xlab("Province") +
+                labs(fill = "Gender (1 = Male, 2 = Female)") +
+                theme_minimal() 
+        } else if (input$info == "Weight and bloodpressure T1") {
+            bin_blp_t1<-hexbin(filtered_data()$WEIGHT_T1, filtered_data()$DBP_T1, xbins=40)
+            my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+            plot(bin_blp_t1, 
+                 xlab = "Weight (kg)",
+                 ylab = "DBP (mm hg)",
+                 colramp = my_colors)
+        }
     })
+    
+
     
     #Doesnt work yet the way it shows is messed up
     output$barPlot <- renderPlotly({

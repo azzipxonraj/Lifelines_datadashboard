@@ -6,12 +6,19 @@
 #
 #    https://shiny.posit.co/
 #
-
 library(shiny)
-library(ggplot2)
 library(dplyr)
+library(psych)
+library(ggplot2)
+library(hexbin)
+library(RColorBrewer)
+library(ggiraph)
 library(DT)
 library(plotly)
+library(tmap)
+library(sf)
+library(ggbeeswarm)
+library(here)
 
 
 
@@ -66,7 +73,10 @@ drenthe_zipcodes <- c(
     9765:9766, 9780:9785, 9959
 )
 
-data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
+file_path <- here("lifelines_data/Dataset", "Lifelines Public Health dataset - 2024.csv")  # Constructs "data/data.csv" relative to the project root
+
+data_lifelines <- read.csv(file_path)
+data_filterd_gender <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
 
 
 #start the server, give it a function
@@ -79,6 +89,7 @@ server <- function(input, output, session) {
         # Load and prepare data
 
         data_filterd <- data_lifelines
+
         
         # Assign province based on ZIP_CODE
         data_filterd <- data_filterd %>% 
@@ -118,27 +129,34 @@ server <- function(input, output, session) {
                 )
         }
         
+
+        
+        
         return(data_filterd)
     })
     
-
     
     output$main_plot <- renderPlot({
         if (input$info == "Sleep quality") {
-            data_sleepqual_dbp <- na.omit(filtered_data())
-            ggplot(data_sleepqual_dbp, aes(x = factor(SLEEP_QUALITY), y = DBP_T1)) +
-                geom_violin() +
+            
+            ggplot(filtered_data(), aes(x = factor(SLEEP_QUALITY), y = DBP_T1, color = factor(SLEEP_QUALITY))) +
+                geom_quasirandom() +
                 xlab("Sleep quality") +
                 ylab("DBP (mm hg)") +
                 theme_minimal()
+            
         } else if (input$info == "Participant area") {
-            ggplot(filtered_data(), aes(x = Province, fill = factor(GENDER))) +
+            
+            ggplot(filtered_data(), aes(x = AGE_T1, fill = factor(GENDER))) +
                 geom_bar() +
                 ylab("Count of People") +
                 xlab("Province") +
                 labs(fill = "Gender (1 = Male, 2 = Female)") +
-                theme_minimal() 
+                theme_minimal() +
+                coord_flip()
+                
         } else if (input$info == "Weight and bloodpressure T1") {
+            
             bin_blp_t1<-hexbin(filtered_data()$WEIGHT_T1, filtered_data()$DBP_T1, xbins=40)
             my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
             plot(bin_blp_t1, 
@@ -147,30 +165,89 @@ server <- function(input, output, session) {
                  colramp = my_colors)
         }
     })
-    
 
-    
-    #Doesnt work yet the way it shows is messed up
+
     output$barPlot <- renderPlotly({
-        plot_ly(filtered_data(), x = ~Province, type = 'bar', 
-                color = ~factor(GENDER), colors = c('blue', 'pink'),
-                text = ~paste("Count: ", factor(GENDER)), hoverinfo = 'text') %>%
-            layout(title = "Count of People by Province and Gender",
-                   xaxis = list(title = "Province"),
-                   yaxis = list(title = "Count of People"),
-                   barmode = 'stack')
+        if (input$info == "Sleep quality") {
+            
+            
+            p_sq <- ggplot(filtered_data(), aes(x = factor(SLEEP_QUALITY), y = DBP_T1, color = factor(SLEEP_QUALITY))) +
+                geom_quasirandom() +
+                xlab("Sleep quality") +
+                ylab("DBP (mm hg)") +
+                labs(color = "Sleep Quality") +
+                theme_minimal()
+            
+            ggplotly(p_sq)
+            
+        } else if (input$info == "Participant area") {
+            p_age_count <- ggplot(filtered_data(), aes(x = AGE_T1, fill = factor(GENDER))) +
+                geom_bar() +
+                ylab("Count of People") +
+                xlab("Province") +
+                labs(fill = "Gender (1 = Male, 2 = Female)") +
+                theme_minimal() +
+                coord_flip()
+            
+            ggplotly(p_age_count)
+            
+        } else if (input$info == "Weight and bloodpressure T1") {
+            ggplot(filtered_data(), aes(x = WEIGHT_T1, y = DBP_T1)) +
+                geom_hex(bins=40) +
+                xlab("Weight (kg)") +
+                ylab("DBP (mm hg)") +
+                theme_minimal()
+        }
     })
-
+    
+    
+    
     
     
     output$summary <- renderText({
+        if (input$info == "Sleep quality") {
+        "
+        This is a quasirandom plot, it is like a violin plot but with points.
+        This plot shows the correlation between good sleep quality being 1 and bloodpressure.
+        Research show's that good sleep is essential to good cardiovascular health, in this plot
+        the difference can be shown in a very light way. There are multiple factors not shown here
+        that can also influence that cardiovascular health. Like weight and age. 
+        !! MALE HAD MANY NA'S CAUSING ERROR IN THE PLOT WITH FILTERING!!
+        
+        "
+        } else if (input$info == "Weight and bloodpressure T1") {
+            
+        "
+        Hexbin chart is a 2d density chart, allowing to visualize the relationship between 2 numeric variables. 
+        Scatterplots can get very hard to interpret when displaying large datasets, 
+        as points inevitably overplot and can't be individually discerned.
+        
+        "
+            
+        } else if (input$info == "Participant area") {
         "
         A barplot (or barchart) is one of the most common types of graphic.
         It shows the relationship between a numeric and a categoric variable. 
         Each entity of the categoric variable is represented as a bar. 
-        The size of the bar represents its numeric value.
-        "
+        The size of the bar represents its numeric value. This barplot shows how many participants there are 
+        and i what age range they are. The user can filter this data with the sidebar!
+        The filtering options are: Gender, Age range and Province"
+            
+        }
+        
     })
+    
+    output$map <- renderTmap({
+        netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
+        
+        selected_provinces <- netherlands %>%
+            filter(name %in% c("Groningen", "Friesland", "Drenthe"))
+        
+        tm_shape(selected_provinces) +
+            tm_polygons(col = "name", title = "Province", border.col = "black") +
+            tm_borders()
+    })
+    
     
     # Render DataTable
     output$Lifelines_example <- renderDataTable({
@@ -187,8 +264,6 @@ server <- function(input, output, session) {
     
     
 }
-    # more graphs?
-    # add near points function so user can click on graph for info
 
     
 

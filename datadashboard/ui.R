@@ -12,6 +12,8 @@ library(ggplot2)
 library(shinythemes)
 library(bslib)
 library(plotly)
+library(tmap)
+library(sf)
 
 
 
@@ -29,7 +31,7 @@ fluidPage(
                                 inputId = "provinces", 
                                 label = "Select provinces to display:", 
                                 choices = c("Groningen", "Drenthe", "Friesland"), 
-                                selected = c("Groningen", "Drenthe", "Friesland") 
+                                selected = c("Groningen", "Drenthe", "Friesland")
                             ),
                             
                             selectInput("gender", "Choose a Gender:", 
@@ -51,27 +53,35 @@ fluidPage(
                             )
                         ),
                         
+                        h4("This data has been suplied by the lifelines project"),
+                        tags$a(href = "https://www.lifelines.nl", "Lifelines", target = "_blank"),
+                        
                ),
                
                
                tabPanel("FAQ",
                         h3("Frequently asked questions"),
-                        p("From where does this data come from.")),
-               
-               tabPanel("Contact & info",
-                        card(
-                            card_title("Contact & Data info"),
-                            card_header("info"),
-                            card_body("This data dashboard shows different health problems / lifestyle choices that can be compared per province. 
-                                      These health problems include; Depression, Burnout and Metabolic dissorders. 
-                                      The lifestyle choices include; Smoking, Alcohol use in grams per week and weight. 
-                                      Although weight isn't always something u can have influence on due to disease
-                                      we can say that most people are able to control it with dieting, suplements and excersise. 
-                                      The comparising is between multiple groups, these being a comparisin between provinces, male and female and it can be looked at through different age ranges."),
-                            card_header("contact")
-                        ))
-               
+                        sidebarPanel(
+                        div(
+                            h4("From where does this data come from."),
+                            p("This data has been suplied by the lifelines project"),
+                            tags$a(href = "https://www.lifelines.nl", "Lifelines", target = "_blank"),
+                            ),
+                        ),
+                        sidebarPanel(
+                        br(),
+                        div(
+                            h4("What area has this data been collected from?"),
+                            p("These provinces have been used in the lifelines data"),
+                            tmapOutput("map"),
+                        ),
+                    ),
                ),
+                        
+               
+
+               
+    ),
 
     
     

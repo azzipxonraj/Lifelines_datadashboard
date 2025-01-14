@@ -16,6 +16,12 @@ library(psych)
 library(ggplot2)
 library(hexbin)
 library(RColorBrewer)
+library(ggiraph)
+library(ggbeeswarm)
+library(tmap)
+library(sf)
+
+
 ```
 
 #Intro
@@ -26,11 +32,14 @@ In this project i've been given data from the Lifelines project. This project ga
 
 19-nov-2024
 
+
+
 ```{r pressure, echo=FALSE}
+library(here)
+file_path <- here("lifelines_data/Dataset", "Lifelines Public Health dataset - 2024.csv")  # Constructs "data/data.csv" relative to the project root
 
-data_lifelines <- read.csv("/Users/jarnoduiker/github_bioinf/Lifelines_datadashboard/lifelines_data/Dataset/Lifelines Public Health dataset - 2024.csv")
+data_lifelines <- read.csv(file_path)
 
-head(data_lifelines$Province)
 ```
 20-nov-2024
 
@@ -142,6 +151,7 @@ data_lifelines <- data_lifelines %>%
 head(data_lifelines$Province)
 
 
+
 ```
 
 
@@ -232,16 +242,25 @@ In this barplot the smokers per gender is shown. Interestingly there are a lot l
 ```{r}
 data_lifelines_gender <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
 
-ggplot(data_lifelines, mapping = aes(x=Province, fill = factor(data_lifelines_gender))) + 
-  geom_bar()+
+ggplot(data_lifelines, mapping = aes(x=AGE_T1, fill = factor(data_lifelines_gender))) + 
+    geom_bar()+
     xlab("Gender") +
     ylab("Count of people") +
-    labs(title = "Genders per province", fill = "Gender
-         Red = Male
-         Blue = Female")
+    labs(title = "Genders per province", fill = "Gender") +
+     coord_flip() 
 ```
 Here is a plot shown that shows the distrubution of male and female per province. This graph is nice and could be a goodfit on the datadashboard. This graph can display difference between male and female well when the datadashboard is filtered by a filter function.
 
+```{r}
+data_lifelines_gender <- data_lifelines$GENDER %>% factor(levels = c(1,2), labels = c("Male", "Female"))
+
+
+ggplot(data_lifelines, mapping = aes(x=Province,y=BMI_T1, color = factor(data_lifelines_gender))) + 
+    geom_quasirandom()+
+    xlab("Gender") +
+    ylab("Count of people") +
+    labs(title = "Genders per province", fill = "Gender") 
+```
 
 ```{r}
 
@@ -321,16 +340,106 @@ ggplot(data_lifelines, mapping = aes(x=GENDER1, fill = factor(DEPRESSION_T1))) +
 ```
 
 ```{r}
-# Create data
-x <- rnorm(mean=1.5, 5000)
-y <- rnorm(mean=1.6, 5000)
- 
-# Make the plot
-bin<-hexbin(x, y, xbins=40)
+
+
+bin<-hexbin(data_lifelines$WEIGHT_T1, data_lifelines$HEIGHT_T1, xbins=40)
 my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
-plot(bin, main="" , colramp=my_colors , legend=F )
+plot(bin, 
+     main = "This Hexbin shows height and weight",
+     xlab = "Weight in KG",
+     ylab = "Height in cm",
+     colramp = my_colors,
+     legend = FALSE)
+
+
 ```
 A hexbin plot is useful to represent the relationship of 2 numerical variables when you have a lot of data points. Without overlapping of the points, the plotting window is split into several hexbins.
+
+
+```{r}
+bin_alc<-hexbin(data_lifelines$AGE_T1, data_lifelines$A_SUM_T1, xbins=40)
+my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+plot(bin_alc, 
+     main = "This Hexbin shows height and weight",
+     xlab = "AGE",
+     ylab = "Alcohol in gram per week",
+     colramp = my_colors,
+     legend = FALSE)
+
+```
+
+```{r}
+bin_blp_t1<-hexbin(data_lifelines$WEIGHT_T1, data_lifelines$DBP_T1, xbins=40)
+my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+plot(bin_blp_t1, 
+     xlab = "Weight (kg)",
+     ylab = "DBP (mm hg)",
+     colramp = my_colors)
+
+bin_blp_t2<-hexbin(data_lifelines$WEIGHT_T2, data_lifelines$DBP_T2, xbins=40)
+my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+plot(bin_blp_t2, 
+     xlab = "Weight (kg)",
+     ylab = "DBP (mm hg)",
+     colramp = my_colors)
+
+
+
+```
+```{r}
+data_sleepqual_dbp <- na.omit(data_lifelines)
+ggplot(data_sleepqual_dbp, aes(x=factor(SLEEP_QUALITY), y=DBP_T1)) + 
+    geom_violin() +
+    xlab("Sleep quality") +
+    ylab("DBP (mm hg)") +
+    theme_minimal()
+```
+
+```{r}
+
+ggplot(data_lifelines, aes(x=factor(FINANCE_T1), y=WEIGHT_T1)) + 
+    geom_boxplot() +
+    xlab("Sleep quality") +
+    ylab("DBP (mm hg)") +
+    theme_minimal()
+```
+
+```{r}
+ggplot(data_lifelines[!is.na(data_lifelines$SPORTS_T1) & !is.na(data_lifelines$DBP_T1), ], 
+       aes(x = factor(SPORTS_T1), y = DBP_T1)) +
+  geom_boxplot() +
+  xlab("Sports") +
+  ylab("DBP (mm hg)") +
+  theme_minimal()
+
+```
+## 09-01-2025
+added some plotly interactive plots of the already static plots with the following code.
+```{r}
+ p_age_count <- ggplot(data_lifelines, aes(x = AGE_T1, fill = factor(GENDER))) +
+                geom_bar() +
+                ylab("Count of People") +
+                xlab("Province") +
+                labs(fill = "Gender (1 = Male, 2 = Female)") +
+                theme_minimal() +
+                coord_flip()
+            
+            ggplotly(p_age_count)
+
+```
+
+
+```{r}
+netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
+
+selected_provinces <- netherlands %>%
+  filter(name %in% c("Groningen", "Friesland", "Drenthe"))
+
+tm_shape(selected_provinces) +
+    tm_polygons(col = "name", title = "Province", border.col = "black") +
+    tm_layout(title = "Selected Dutch Provinces") +
+    tm_borders()
+```
 
 ## CODE REVIEUW
 

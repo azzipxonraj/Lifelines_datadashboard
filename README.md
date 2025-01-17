@@ -12,7 +12,7 @@ This project is a datadashboard made using data provided by <https://www.lifelin
 
 So why Diastolic Blood presure? a high blood presure is very dangerous for a multitude of factors. High bloodpresure damages the bloodvessel wall, these damages are microtears in the bloodvessel wall this in turn causes Atherosclerosis (the buildup of fats, cholesterol and other substances in and on the artery walls) due to this the veins will narrow and cause more stress on that spot in the bloodvessel.
 
-![Figure 1: Complications of atherosclerosis - <https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG>](https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG "a title"){alt="Alt text"}
+![Alt text](https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG "a title")
 
 Seen in this figure is the progression of atherosclerosis, it will start slow and build up allot of plaque and fats, then there are three options that will occur. critical stenosis can cause a variety of symptoms ranging from lower back pain to weakness in the legs and many other's depending on where the vein is located. Superimposed thrombus is also a possibilty of late stage atherosclerosis, this means a blood cloth will be stuck in the vein causing a blockade that could lead to a stroke when this happens in the brain or a heart attack when in the heart and a variaety of different other complications depending on what area the vein is located. Aneurism/Rupture of the veinwall happens when the cellwall becomes too weak due to excess stress from high blood pressure causing it to rip and blood leaking into your body. This will cause different complications again varying on the location of the vein. some complications could include internal bleeding and a stroke.
 
@@ -34,7 +34,7 @@ There is also a page that explains Frequently Asked Questions and a page for con
 #### Library's
 
 | Package      | Version   | Link                                                            |
-|----------------|----------------|---------------------------------------|
+|-----------------|-----------------|--------------------------------------|
 | shiny        | 1.9.1     | [shiny](https://cran.r-project.org/package=shiny)               |
 | dplyr        | 1.1.4     | [dplyr](https://cran.r-project.org/package=dplyr)               |
 | psych        | 2.4.6.26  | [psych](https://cran.r-project.org/package=psych)               |
@@ -51,19 +51,25 @@ All these versions have been checked on my personal system on 14-01-2025
 
 ### Results
 
-![Figure 2: Opening screen](images/Scherm­afbeelding 2025-01-14 om 18.08.52.png){width="723"}
+![Figure 2: Opening screen](images/Home_screen.png)
 
 Here is the first thing shown when you run the app. This shows the filtering options, the different tabs with the non-interactive and interactive plot, the summary (text explenation) and the table. The filter area can be changed but show's the standard settings of all provinces, all genders and all ages.
 
 **The graphs**
 
-![Figure 3: Participants where X = counts and Y = Age](images/Scherm­afbeelding 2025-01-14 om 18.59.38.png)
+![Figure 3: Participants where X = counts and Y = Age](images/barplot.png)
+
+A barplot (or barchart) is one of the most common types of graphic. It shows the relationship between a numeric and a categoric variable. Each entity of the categoric variable is represented as a bar. The size of the bar represents its numeric value. This barplot shows how many participants there are and i what age range they are. The user can filter this data with the sidebar! The filtering options are: Gender, Age range and Province"
 
 Figure 3 is a barplot that shows
 
-![Figure 4: Hexbin plot for Weight (kg) and DBP (mm hg)](images/Scherm­afbeelding 2025-01-14 om 18.59.21.png)
+![Figure 4: Hexbin plot for Weight (kg) and DBP (mm hg)](images/Hexbin_plot.png)
 
-![Figure 5: Violin / quasirandom that has the DBP (mm hg) and sleep quality](images/Scherm­afbeelding 2025-01-14 om 18.59.14-01.png)
+Hexbin chart is a 2d density chart, allowing to visualize the relationship between 2 numeric variables. Scatterplots can get very hard to interpret when displaying large datasets, as points inevitably overplot and can't be individually discerned.
+
+![Figure 5: Violin / quasirandom that has the DBP (mm hg) and sleep quality](images/Violin_plot.png)
+
+Figure 5 is a quasirandom plot, it is like a violin plot but with points. This plot shows the correlation between good sleep quality being 1 and bloodpressure. Research show's that good sleep is essential to good cardiovascular health, in this plot the difference can be shown in a very light way. There are multiple factors not shown here that can also influence that cardiovascular health. Like weight and age. !! MALE HAD MANY NA'S CAUSING ERROR IN THE PLOT WITH FILTERING!!
 
 ### Executing program
 

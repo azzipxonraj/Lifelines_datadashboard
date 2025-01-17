@@ -3,17 +3,16 @@
 This project presents an interactive data dashboard based on exploratory data analysis using data from [LifeLines](https://www.lifelines.nl). The dashboard explores correlations between lifestyle factors such as sleep quality and weight, and diastolic blood pressure (DBP). These factors were chosen because they are often manageable through personal lifestyle changes or medical intervention. High blood pressure is a critical health concern due to its role in conditions like atherosclerosis, strokes, and heart attacks.
 
 The dashboard includes three main visualizations: participant distribution, sleep quality, and weight in relation to blood pressure. Users can explore both interactive and non-interactive plots, apply filters for province, gender, and age group, and access additional tabs for explanations, FAQs, and contact information. This functionality enables users to discover insights that could benefit public health understanding.
+1. [Background](#background)
+2. [How to use this app](#how-to-use-this-app)
+3. [Libraries](#libraries)
+4. [What do you see?](#what-do-you-see)
+5. [Authors](#authors)
+6. [Results](#results)
+7. [Version History](#version-history)
+8. [License](#license)
 
-1.  [Background](#Background)
-2.  [#How%20to%20use%20this%20app](#How to use this app)
-3.  [Library's](#Library's)
-4.  [What%20do%20you%20see?](#What do you see?)
-5.  [Authors](#Authors)
-6.  [Results](#Results)
-7.  [Version%20History](#Version History)
-8.  [License](#License)
-
-## Background {#background}
+## Background
 
 An in-depth paragraph about your project and overview of use.
 
@@ -29,7 +28,7 @@ Seen in this figure is the progression of atherosclerosis, it will start slow an
 
 -   R version 4.4.1 (2024-06-14)
 
-#### Library's
+#### Libraries
 
 Here's how to install the required packages
 

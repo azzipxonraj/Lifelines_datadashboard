@@ -4,16 +4,16 @@ This project presents an interactive data dashboard based on exploratory data an
 
 The dashboard includes three main visualizations: participant distribution, sleep quality, and weight in relation to blood pressure. Users can explore both interactive and non-interactive plots, apply filters for province, gender, and age group, and access additional tabs for explanations, FAQs, and contact information. This functionality enables users to discover insights that could benefit public health understanding.
 
-1. [Background](#Background)
-2. [How to use this app](#How to use this app)
-3. [Library's](#Library's)
-4. [What do you see?](#What do you see?)
-5. [Authors](#Authors)
-6. [Results](#Results)
-7. [Version History](#Version History)
-8. [License](#License)
+1.  [Background](#Background)
+2.  [#How%20to%20use%20this%20app](#How to use this app)
+3.  [Library's](#Library's)
+4.  [What%20do%20you%20see?](#What do you see?)
+5.  [Authors](#Authors)
+6.  [Results](#Results)
+7.  [Version%20History](#Version History)
+8.  [License](#License)
 
-## Background
+## Background {#background}
 
 An in-depth paragraph about your project and overview of use.
 
@@ -44,7 +44,7 @@ BiocManager::install("package")
 ```
 
 | Package      | Version   | Link                                                            |
-|------------------|------------------|-------------------------------------|
+|-------------------|-------------------|-----------------------------------|
 | shiny        | 1.9.1     | [shiny](https://cran.r-project.org/package=shiny)               |
 | dplyr        | 1.1.4     | [dplyr](https://cran.r-project.org/package=dplyr)               |
 | psych        | 2.4.6.26  | [psych](https://cran.r-project.org/package=psych)               |
@@ -104,10 +104,9 @@ Figure 5 is a quasirandom plot, it is like a violin plot but with points. This p
 -   0.1
     -   Initial Release
 
-
 ## License
 
-This project is licensed under the [MIT License](LICENSE).  
+This project is licensed under the [MIT License](LICENSE).\
 Feel free to use, modify, and distribute this project under the terms of the license.
 
 ## Acknowledgments

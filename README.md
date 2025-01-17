@@ -4,7 +4,7 @@ This project presents an interactive data dashboard based on exploratory data an
 
 The dashboard includes three main visualizations: participant distribution, sleep quality, and weight in relation to blood pressure. Users can explore both interactive and non-interactive plots, apply filters for province, gender, and age group, and access additional tabs for explanations, FAQs, and contact information. This functionality enables users to discover insights that could benefit public health understanding.
 
-## Description
+## Background
 
 An in-depth paragraph about your project and overview of use.
 
@@ -12,7 +12,10 @@ This project is a datadashboard made using data provided by <https://www.lifelin
 
 So why Diastolic Blood presure? a high blood presure is very dangerous for a multitude of factors. High bloodpresure damages the bloodvessel wall, these damages are microtears in the bloodvessel wall this in turn causes Atherosclerosis (the buildup of fats, cholesterol and other substances in and on the artery walls) due to this the veins will narrow and cause more stress on that spot in the bloodvessel.
 
-![Alt text](https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG "a title")
+
+![Figure 1: Complications of atherosclerosis - <https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG>](https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG "Complications of atherosclerosis")
+
+
 
 Seen in this figure is the progression of atherosclerosis, it will start slow and build up allot of plaque and fats, then there are three options that will occur. critical stenosis can cause a variety of symptoms ranging from lower back pain to weakness in the legs and many other's depending on where the vein is located. Superimposed thrombus is also a possibilty of late stage atherosclerosis, this means a blood cloth will be stuck in the vein causing a blockade that could lead to a stroke when this happens in the brain or a heart attack when in the heart and a variaety of different other complications depending on what area the vein is located. Aneurism/Rupture of the veinwall happens when the cellwall becomes too weak due to excess stress from high blood pressure causing it to rip and blood leaking into your body. This will cause different complications again varying on the location of the vein. some complications could include internal bleeding and a stroke.
 

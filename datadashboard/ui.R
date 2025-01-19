@@ -12,9 +12,16 @@ library(ggplot2)
 library(shinythemes)
 library(bslib)
 library(plotly)
+library(dplyr)
+library(psych)
+library(hexbin)
+library(RColorBrewer)
+library(ggiraph)
+library(DT)
+library(plotly)
 library(tmap)
 library(sf)
-
+library(ggbeeswarm)
 
 
 # Define UI for application that draws a histogram
@@ -22,8 +29,11 @@ fluidPage(
 
     # Application title
     titlePanel("Data lifelines - Project"),
+
     
     navbarPage("Lifelines",
+   
+               
                
                tabPanel("Dataviewer",
                         sidebarPanel(
@@ -37,20 +47,38 @@ fluidPage(
                             selectInput("gender", "Choose a Gender:", 
                                         choices = c("All genders", "Male", "Female")),
                             
-                            selectInput("age", "Choose an age range:", 
-                                        choices = c("All ages", "65+", "26-65", "under 26")),
+                            sliderInput( "age_slider", "Age Slider", min = 0, max = 100, 
+                                value = c(0, 100)),
                             
-                            selectInput("info", "Choose what u want to see:", 
-                                        choices = c("Participant area", "Sleep quality", "Weight and bloodpressure T1"))
+                            selectizeInput("select_finance",
+                                           "Select options below:",
+                                           list("Financial situation" = list("I do not know" = 1, 
+                                                           "I don't want to awnnser" = 2, 
+                                                           "less then 750" = 3,
+                                                           "750-1000" = 4, 
+                                                           "1000-1500" = 5, 
+                                                           "1500-2000" = 6, 
+                                                           "2000-2500" = 7, 
+                                                           "2500-3000" = 8, 
+                                                           "3000-3500" = 9,
+                                                           "More then 3500" = 10
+                                                           )),
+                                           multiple = TRUE
+                            ),
+                                
+                            
+                            selectInput("info", "Choose what you want to see:", 
+                                        choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1")),
+                            width = 2
                         ),
                         
                         mainPanel(
                             tabsetPanel(
-                                tabPanel("Plot", plotOutput("main_plot", width = "800px")),
-                                tabPanel("Interactive Plot", plotlyOutput("barPlot")),
-                                tabPanel("Summary", verbatimTextOutput("summary")),
+                                tabPanel("Static plot", plotOutput("main_plot", width = "800px")),
+                                tabPanel("Interactive plot", plotlyOutput("barPlot")),
                                 tabPanel("Table", dataTableOutput("Lifelines_example"))
-                            )
+                            ),
+                            width = 8
                         ),
                         
                         h4("This data has been suplied by the lifelines project"),

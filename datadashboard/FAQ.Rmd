@@ -1,0 +1,41 @@
+# FAQ
+
+##### *Any questions that remain unawnsered can be asked on github to user azzipxonraj*
+
+What plots have been used?
+
+There are 3 plots being used:
+
+-   Hexbin
+
+-   Barplot
+
+-   Quasirandom / Violin
+
+The plots each show's their data in a different way.
+
+**Hexbin**
+
+A hexbin chart is a 2D density plot that visualizes the relationship between two numeric variables. Scatterplots can
+become difficult to interpret when displaying large datasets due to overlapping points, making it hard to distinguish
+individual data points. The hexbin chart overcomes this limitation by grouping data into hexagonal bins and displaying
+their density. In this project to make the Hexbin more easy to interpret a interactive version has been made besides the static version. This allows the user to hover over each point with their mouse and get the exact number of counts.
+
+**Barplot**
+
+```{r}
+    
+library(tmap)
+library(dplyr)
+library(rnaturalearth)
+
+netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
+
+selected_provinces <- netherlands %>%
+    filter(name %in% c("Groningen", "Friesland", "Drenthe"))
+
+tm_shape(selected_provinces) +
+    tm_polygons(col = "name", title = "Province", border.col = "black") +
+    tm_borders()
+
+```

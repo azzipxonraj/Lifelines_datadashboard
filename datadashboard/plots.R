@@ -50,3 +50,27 @@ plot_weight_bp_interactive <- function(data) {
         ylab("DBP (mm hg)") +
         theme_minimal()
 }
+
+plot_finance_bp <- function(data) {
+    ggplot(data, aes(x=factor(FINANCE_T1), y=WEIGHT_T1)) + 
+        geom_boxplot() +
+        xlab("Finance") +
+        ylab("DBP (mm hg)") +
+        theme_minimal()
+}
+
+plot_sports_dbp <- function(data){
+    ggplot(data, aes(x=!is.na(SPORTS_T1), y=DBP_T1)) + 
+        geom_boxplot() +
+        xlab("Participates in sports") +
+        ylab("DBP (mm hg)") +
+        theme_minimal()
+}
+
+plot_sports_glu <- function(data){
+    ggplot(data, aes(x=!is.na(SPORTS_T1), y=CHO_T1)) + 
+        geom_boxplot() +
+        xlab("Participates in sports") +
+        ylab("Cholesterol (mmol/L)") +
+        theme_minimal()
+}

@@ -22,6 +22,8 @@ library(plotly)
 library(tmap)
 library(sf)
 library(ggbeeswarm)
+library(markdown)
+
 
 
 # Define UI for application that draws a histogram
@@ -68,8 +70,12 @@ fluidPage(
                                 
                             
                             selectInput("info", "Choose what you want to see:", 
-                                        choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1")),
-                            width = 2
+                                        choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1", "Finance and DBP")),
+                            width = 2,
+                            
+                            h5("Download table"),
+                            downloadButton("downloadData", "Download")
+                            
                         ),
                         
                         mainPanel(
@@ -79,6 +85,7 @@ fluidPage(
                                 tabPanel("Table", dataTableOutput("Lifelines_example"))
                             ),
                             width = 8
+                            
                         ),
                         
                         h4("This data has been suplied by the lifelines project"),
@@ -88,22 +95,7 @@ fluidPage(
                
                
                tabPanel("FAQ",
-                        h3("Frequently asked questions"),
-                        sidebarPanel(
-                        div(
-                            h4("From where does this data come from."),
-                            p("This data has been suplied by the lifelines project"),
-                            tags$a(href = "https://www.lifelines.nl", "Lifelines", target = "_blank"),
-                            ),
-                        ),
-                        sidebarPanel(
-                        br(),
-                        div(
-                            h4("What area has this data been collected from?"),
-                            p("These provinces have been used in the lifelines data"),
-                            tmapOutput("map"),
-                        ),
-                    ),
+                        includeMarkdown("FAQ.Rmd")
                ),
                         
                

@@ -91,6 +91,8 @@ server <- function(input, output, session) {
             plot_participants(filtered_data())
         } else if (input$info == "Weight and bloodpressure T1") {
             plot_weight_bp_static(filtered_data())
+        } else if (input$info == "Finance and DBP") {
+            plot_finance_bp(filtered_data())
         }
     })
     
@@ -101,23 +103,34 @@ server <- function(input, output, session) {
             ggplotly(plot_participants(filtered_data()))
         } else if (input$info == "Weight and bloodpressure T1") {
             ggplotly(plot_weight_bp_interactive(filtered_data()))
+        } else if (input$info == "Finance and DBP") {
+            ggplotly(plot_finance_bp(filtered_data()))
         }
     })
     
+    #here the filtered_data() gets put in a downloadable file with all added filters by user
+    output$downloadData <- downloadHandler(
+        #here the filename and file type gets made (a csv is easiest)
+        filename = function() {
+            paste("Lifelines_example", ".csv", sep = "")
+        },
+        #here gets specified what should be in the file and its the filtered_data()
+        content = function(file) {
+            write.csv(filtered_data(), file, row.names = FALSE) 
+        }
+    )
     
-    
-    
-
     
     # Render DataTable
     output$Lifelines_example <- renderDataTable({
         DT::datatable(
             filtered_data(), 
             options = list(
-                pageLength = 10, 
-                autoWidth = TRUE, 
-                searching = TRUE, 
-                lengthMenu = c(5, 10, 25, 50, 100)
+                pageLength = 10,
+                autoWidth = TRUE,
+                searching = TRUE,
+                lengthMenu = c(5, 10, 25, 50, 100),
+                scrollX = TRUE  # Enable horizontal scrolling
             )
         )
     })

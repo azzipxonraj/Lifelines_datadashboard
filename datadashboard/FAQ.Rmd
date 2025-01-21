@@ -1,57 +1,91 @@
 # FAQ
 
-##### *Any questions that remain unawnsered can be asked on github to user azzipxonraj*
-
-What plots have been used?
-
-There are 3 plots being used:
-
--   Hexbin
-
--   Barplot
-
--   Quasirandom / Violin
-
-The plots each show's their data in a different way.
+## What are these plots?
 
 **Hexbin**
 
-![Figure 1: Hexbin](images/Hexbin_plot.png)
+![Figure 1: Hexbin](images/Hexbin_plot.png){width="822"}
 
 A hexbin chart is a 2D density plot that visualizes the relationship between two numeric variables. Scatterplots can become difficult to interpret when displaying large datasets due to overlapping points, making it hard to distinguish individual data points. The hexbin chart overcomes this limitation by grouping data into hexagonal bins and displaying their density. In this project to make the Hexbin more easy to interpret a interactive version has been made besides the static version. This allows the user to hover over each point with their mouse and get the exact number of counts.
 
+The plot contains on the x-axis the Weight for each person in kilograms. the y-axis contains the Diastolic blood pressure in mm hg. The legend gives a counts type but it has a hard time updating with the filter sometimes.
+
 **Barplot**
 
-![Figure 2: Barplot](images/barplot.png)
+![Figure 2: Barplot](images/barplot.png){width="822"}
 
-A barplot (or bar chart) is one of the most common types of graphics. It is used to display the relationship between a categorical and a numeric variable. Each category is represented by a bar, and the size of the bar corresponds to the numeric value it represents. This barplot shows the number of participants within different age ranges. The user can filter the data using the sidebar, with filtering options including gender, age range, and province.
+Figure 2 is a barplot (or bar chart) it is one of the most common types of graphics. It is used to display the relationship between a categorical and a numeric variable. Each category is represented by a bar, and the size of the bar corresponds to the numeric value it represents. This barplot shows the number of participants within different age ranges. The user can filter the data using the sidebar, with filtering options including gender, age range, and province.
+
+This plot is to show who's participating in this lifelines project. The x-axis show's the ammount of people. The y-axis will show the age. The legend has 2 numbers: 1 = Male and 2 = Female.
 
 **Violin / Quasirandom**
 
-![Figure 3L Quasirandom / Violin plot](images/Violin_plot.png)
+![Figure 3: Quasirandom / Violin plot](images/Violin_plot.png){width="822"}
 
-This is a quasirandom plot, similar to a violin plot but with individual data points for added granularity.
-The plot illustrates the correlation between sleep quality (where good sleep is represented by 1) and blood pressure. Research shows that good sleep is essential for maintaining cardiovascular health. In this plot, the relationship between these factors is subtly visualized. However, it is important to note that there are other factors not included in this plot, such as weight and age, which can also influence cardiovascular health. Note: There were many missing values (NA's) in the male dataset, which caused errors during the filtering process.
+Figure 3 is a quasirandom plot, similar to a violin plot but with individual data points for added granularity.
+The plot illustrates the correlation between sleep quality (where good sleep is represented by 1) and blood pressure. Research shows that good sleep is essential for maintaining cardiovascular health. In this plot, the relationship between these factors is subtly visualized. However, it is important to note that there are other factors not included in this plot, such as weight and age, which can also influence cardiovascular health.
 
-**What provinces has this data been collected from**
+The x-axis shows sleep quality, 0 = bad sleep and 1 being good sleep quality
 
-```{r auto-run, eval=TRUE, echo=FALSE}
-    
-library(tmap)
-library(dplyr)
-library(rnaturalearth)
+Note: There were many missing values (NA's) in the male dataset, which caused errors during the filtering process. For this reason the NA's have been left in the plot.
 
-netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
+![Figure 4: NSES boxplot](images/NSES_plot.png){width="800"}
 
-selected_provinces <- netherlands %>%
-    filter(name %in% c("Groningen", "Friesland", "Drenthe"))
+A boxplot effectively summarizes one or more numeric variables by highlighting key statistical features. The box represents the interquartile range (IQR), which spans the middle 50% of the data between the lower (Q1) and upper (Q3) quartiles, with the line inside indicating the median. Whiskers extend from the box to represent the range of values within 1.5 times the IQR beyond Q1 and Q3, excluding outliers. Any values outside this range are marked as outliers, providing a clear visual of the data's spread and central tendency. This plot show's NSES - Neighborhood socio-economic status score according to CBS Statistics
+Netherlands, based on inhabitants’ educational level, income and job prospective. This means a higher score = a better Neighborhood.
 
-tm_shape(selected_provinces) +
-    tm_polygons(col = "name", title = "Province", border.col = "black") +
-    tm_borders()
+The x-axis is financial situation and the y-axis shows the NSES score.
 
-```
+![Figure 5: Alcohol - Depression density plot](images/plot_alc.png){width="800"}
 
-**Where does this data come from?**
+Figure 5 shows the distribution of daily alcohol consumption (in grams) for two groups, "0" and "1," using density curves. Both distributions are left-skewed, indicating that most individuals in both groups consume little to no alcohol. Group "0" has a broader distribution with more extreme values, while group "1" shows a sharper peak at low consumption levels and fewer outliers, reflecting differences in alcohol consumption patterns.
+
+People with depression can have destructive behavior that could lead to more alcohol use, therefore this plot can be interesting with the filtering.
+
+![Figure 6: DBP for every financial situation](images/bar_plot_DBP.png){width="800"}
+
+A boxplot effectively summarizes one or more numeric variables by highlighting key statistical features. The box represents the interquartile range (IQR), which spans the middle 50% of the data between the lower (Q1) and upper (Q3) quartiles, with the line inside indicating the median. Whiskers extend from the box to represent the range of values within 1.5 times the IQR beyond Q1 and Q3, excluding outliers. Any values outside this range are marked as outliers, providing a clear visual of the data's spread and central tendency. This plot show's DBP for each financial situation. The DBP is influenced not only by physical health but also mental health, problems like stress and financial hardship can have a big influence too. This is why this plot is very important.
+
+## What are the filter options?
+
+![Figure 7: Filter options](images/Filter_option.png){width="216"}
+
+-   Province selection
+
+    -   Due to the data being collected from 3 different provinces, comparing the plots between these would be very interesting. For this reason the filter option for each province have been added. This has been done with filtering for zip-codes. The way of selecting what provinces should be shown is done with checkboxes. All provinces start being checked and can be unchecked and are then filtered out the plot.
+
+-   Gender selection
+
+    -   The gender of a person can have influence on the outcome of different plots. For example the average weight will be very different for females then for males so by filtering out males the plot could show a very different result. Selecting what gender should be shown is done by selecting the wanted gender from a drop down. This being, All genders, Male or Female.
+
+-   Age slider
+
+    -   The age can have influence on allot of variables like weight, financial situation , sleep quality and much more. Due to this an age slider has been implemented so the user can choose themselfs what age group should be shown. As standard all ages from a min of 0 to a max of 100 years old will be shown this includes all ages from the dataset from lifelines.
+
+-   Financial situation
+
+    -   For the financial situation there are 10 choices, 2 contain people who either didn't know or people who didn't want to say. for the other 8 there is a scale from less then 750 euro a month to more then 3500 a month. All these different salary ranges will be displayed in full with a format like "750-1000". The financial situation that you're in will have allot of impact on what resources you have available. Due to that changing your health or ways of living will be easier most likely when u have more money. It can however also have negative influence on your mental health with stress and burnouts. This is why it is important to have this as a seperate filter.
+
+### Other options
+
+-   Choose what you want to see
+
+    -   This is the dropdown menu that shows what plots are available, for explenation what each plot contains see figures above.
+
+-   Download table
+
+    -   This button let's the user dowload the data with how they've modified it. it will pop up a save window for the user to give it a name and the file will be saved as a .csv
+
+## **Where does this data come from?**
 
 This data has been suplied by the lifelines project - <https://www.lifelines.nl>
+
+## What is the background info?
+
+This project is a datadashboard made using data provided by <https://www.lifelines.nl> this data has been through a Exploratory Data Analysis. The findings that we're found interesting from this analysis have been visualized in a normal plot and an interactive plot that show different lifestyle factors. The lifestyle factors that have been chosen are the sleep quality and weight in correlation to DBP (Diastolic Blood presure). These factors have been chosen because they are two things that can be fixed by people themselfs. A high weight can be fixed for 90% of people with a healthy diet and regular excercise, this meaning that if their bloodpressure is high due to their weight it should be able to be lowered by the previously mentioned solutions. For sleep quality it could be harder to fix but still managable, this could be fixed by going to a doctor (allot of people have undiagnosed sleep apnea) that could give a diagnose of different scala. Or the quality of where someone sleeps need's improvement, this could be the sounds that happen when a person is supossed to sleep, the ammount of blue light a person gets before bed that could mess with their melatonin or other hormones, the quality of the bed and the room could contribute to bad sleep and ofcourse the length of someone's sleep has influence on the sleep cycles that contributes most to quality of sleep. Getting enough rem sleep is essential for optimal function of the body and mind.So why Diastolic Blood presure? a high blood presure is very dangerous for a multitude of factors. High bloodpresure damages the bloodvessel wall, these damages are microtears in the bloodvessel wall this in turn causes Atherosclerosis (the buildup of fats, cholesterol and other substances in and on the artery walls) due to this the veins will narrow and cause more stress on that spot in the bloodvessel.
+
+![Figure 7: Complications of atherosclerosis - https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG](https://upload.wikimedia.org/wikipedia/commons/5/5b/Late_complications_of_atherosclerosis.PNG "Complications of atherosclerosis"){width="800"}Seen in this figure is the progression of atherosclerosis, it will start slow and build up allot of plaque and fats, then there are three options that will occur. critical stenosis can cause a variety of symptoms ranging from lower back pain to weakness in the legs and many other's depending on where the vein is located. Superimposed thrombus is also a possibilty of late stage atherosclerosis, this means a blood cloth will be stuck in the vein causing a blockade that could lead to a stroke when this happens in the brain or a heart attack when in the heart and a variaety of different other complications depending on what area the vein is located. Aneurism/Rupture of the veinwall happens when the cellwall becomes too weak due to excess stress from high blood pressure causing it to rip and blood leaking into your body. This will cause different complications again varying on the location of the vein. some complications could include internal bleeding and a stroke.
+
+## Contact
+
+##### *Any questions that remain unawnsered can be asked on github to user azzipxonraj*

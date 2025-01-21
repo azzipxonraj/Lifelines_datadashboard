@@ -53,9 +53,9 @@ fluidPage(
                                 value = c(0, 100)),
                             
                             selectizeInput("select_finance",
-                                           "Select options below:",
+                                           "Select Financial situation :",
                                            list("Financial situation" = list("I do not know" = 1, 
-                                                           "I don't want to awnnser" = 2, 
+                                                           "I don't want to awnser" = 2, 
                                                            "less then 750" = 3,
                                                            "750-1000" = 4, 
                                                            "1000-1500" = 5, 
@@ -70,7 +70,8 @@ fluidPage(
                                 
                             
                             selectInput("info", "Choose what you want to see:", 
-                                        choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1", "Finance and DBP")),
+                                        choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1",
+                                                    "Finance and DBP", "NSES", "Alcohol consumption with depression")),
                             width = 2,
                             
                             h5("Download table"),
@@ -95,6 +96,11 @@ fluidPage(
                
                
                tabPanel("FAQ",
+                        div(
+                            h4("What area has this data been collected from?"),
+                            p("These provinces have been used in the lifelines data"),
+                            tmapOutput("map"),
+                        ),
                         includeMarkdown("FAQ.Rmd")
                ),
                         

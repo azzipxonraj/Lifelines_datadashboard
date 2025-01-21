@@ -93,6 +93,11 @@ server <- function(input, output, session) {
             plot_weight_bp_static(filtered_data())
         } else if (input$info == "Finance and DBP") {
             plot_finance_bp(filtered_data())
+        } else if (input$info == "NSES") {
+            plot_NSES(filtered_data())
+        } else if (input$info == "Alcohol consumption with depression") {
+            plot_alc_depression(filtered_data())
+            
         }
     })
     
@@ -105,6 +110,11 @@ server <- function(input, output, session) {
             ggplotly(plot_weight_bp_interactive(filtered_data()))
         } else if (input$info == "Finance and DBP") {
             ggplotly(plot_finance_bp(filtered_data()))
+        } else if (input$info == "NSES") {
+            ggplotly(plot_NSES(filtered_data()))
+        } else if (input$info == "Alcohol consumption with depression") {
+            ggplotly(plot_alc_depression(filtered_data()))
+            
         }
     })
     
@@ -120,6 +130,16 @@ server <- function(input, output, session) {
         }
     )
     
+    output$map <- renderTmap({
+        netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
+        
+        selected_provinces <- netherlands %>%
+            filter(name %in% c("Groningen", "Friesland", "Drenthe"))
+        
+        tm_shape(selected_provinces) +
+            tm_polygons(col = "name", title = "Province", border.col = "black") +
+            tm_borders()
+    })
     
     # Render DataTable
     output$Lifelines_example <- renderDataTable({

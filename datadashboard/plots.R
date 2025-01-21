@@ -10,6 +10,8 @@ library(plotly)
 library(tmap)
 library(sf)
 library(ggbeeswarm)
+library(ggridges)
+
 
 # Sleep Quality Plot
 plot_sleep_quality <- function(data) {
@@ -54,7 +56,7 @@ plot_weight_bp_interactive <- function(data) {
 plot_finance_bp <- function(data) {
     ggplot(data, aes(x=factor(FINANCE_T1), y=WEIGHT_T1)) + 
         geom_boxplot() +
-        xlab("Finance") +
+        xlab("Financial situation") +
         ylab("DBP (mm hg)") +
         theme_minimal()
 }
@@ -74,3 +76,21 @@ plot_sports_glu <- function(data){
         ylab("Cholesterol (mmol/L)") +
         theme_minimal()
 }
+
+plot_NSES <- function(data){
+    ggplot(data, aes(x=factor(FINANCE_T1), y=NSES)) + 
+        geom_boxplot() +
+        xlab("Financial situation") +
+        ylab("NSES score") +
+        theme_minimal()
+}
+
+plot_alc_depression <- function(data){
+    ggplot(data=data, aes(x=SUMOFALCOHOL, group=factor(DEPRESSION_T1), fill=DEPRESSION_T1)) +
+        geom_density(adjust=1.5) +
+        xlab("Sum of alcohol per day in gram") +
+        facet_wrap(~DEPRESSION_T1) +
+        theme(legend.position = "none")
+}
+
+

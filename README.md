@@ -44,7 +44,7 @@ BiocManager::install("package")
 ```
 
 | Package      | Version   | Link                                                            |
-|--------------|-----------|-----------------------------------------------------------------|
+|-----------------|-----------------|--------------------------------------|
 | shiny        | 1.9.1     | [shiny](https://cran.r-project.org/package=shiny)               |
 | dplyr        | 1.1.4     | [dplyr](https://cran.r-project.org/package=dplyr)               |
 | psych        | 2.4.6.26  | [psych](https://cran.r-project.org/package=psych)               |

@@ -2,14 +2,17 @@
 title: "Logboek Lifelines"
 author: "Jarno Jacob Duiker"
 date: "2024-11-19"
-output: html_document
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 library(shiny)
 library(dplyr)
 library(psych)
@@ -20,15 +23,20 @@ library(ggiraph)
 library(ggbeeswarm)
 library(tmap)
 library(sf)
+library(ggridges)
+library(plotly)
 
 
 ```
 
-#Intro
+
+
+
+## Intro
 
 In this project i've been given data from the Lifelines project. This project gave people who lived in the provinces of Drenthe, Groningen and Friesland a questionair that collected data on numerous catagories. These catagories include things like; Weight, Height, Finances, different diseases, different lifestyle choices, differences in social status (financials, degree, etc). These different catagories have been measured in different ways, some are measured according to external rule sets. For example, Data on sleep quality (section: lifestyle and environment) has been reviewed by researchers from the Erasmus MC who have developed a PSQI derivative for the Lifelines cohort. The variable included in the public health dataset is an indicator of people who experience ‘poor sleep quality’. They have given a score back being either 0 meaning bad sleep quality, or a score of 1 meaning good sleep quality. The task at hand will be creating a nice and sleek datadashboard that display's certain catagories that are important. The catagories that we're found to be important in this research will be lifestyle catagories. This will include; METABOLIC_DISORDER, BURNOUT, DEPRESSION, MWK_VAL / SPORTS_T1, SLEEP_QUALITY, SMOKING, SUMOFALCOHOL, SUMOFKCAL, DBP (Diastolic Blood Pressure in mm hg at baseline), HBF (Pulse rate in beats per minute at baseline), FINANCE, BMI, WEIGHT, HEIGHT. These different factors in lifestyle can be viewed in different ways; the datadashboard will have a standard barplot and a interactive barplot these plots can be filtered in different ways through a sidebar. This sidebar will have filters in what provinces are shown, What genders are shown and what age range is show (later financial situation also will be shown). There will be 2 plots a hexbin plot and a barplot (switching between this can be done with a dropdown box). The purpose of this datadashboard is for the user to see what different lifestyles are common in different provinces but also what province is the healthiest or wealthiest this can give them a general idea of what province is benificial for them. It can also influence people to think of certain research that needs to be done. For example if the data shows that the province of Drenthe has an absurd spike in people with lung isues compared to the other provinces it could lead questions about industry and air quality. In this logbook there will be an analysis of the data and a decision about what data to use and what graph to use and how these things will be shown on the data dashboard
 
-###Data analysis, filtering and sorting
+## Data analysis, filtering and sorting
 
 19-nov-2024
 
@@ -84,7 +92,7 @@ se is the standard error.
 
 -   
 
-###Postal codes 
+## Postal codes
 Here i've found all postal codes for each province. This is necasary to make a new catagory in the dataframe that shows from what province each participant is. These zipcodes are put in lists. Also the dataframe will be mutated (this is where the new column is made).
 
 *Friesland postalcode 8388 - 9299 + 9850 - 9859*
@@ -181,7 +189,7 @@ ggplot(data_lifelines, aes(x=GENDER1, y=SUMOFKCAL, fill=GENDER1)) +
 ```
 Here is a boxplot of the sum of kcal for each gender per day. As expected the average for men is around 2300-2400 and the average for females is around 1800-1900. Something notable is that there are no males that have a extreme low kcal when there are females that eat 0 or close to 0 kcal each day. This however could be a randomisation error. This is because to keep the data private the lifelines project
 
-####26 nov
+## 26-nov-2024
 ```{r, Length and weight scatterplot}
 ggplot(data_lifelines, aes(x=WEIGHT_T1, y=HEIGHT_T1)) +
     geom_point(alpha= 0.2, size=.2) +
@@ -338,7 +346,7 @@ ggplot(data_lifelines, aes(SUMOFALCOHOL, PREGNANCIES)) +
 ggplot(data_lifelines, mapping = aes(x=GENDER1, fill = factor(DEPRESSION_T1))) + 
   geom_bar()
 ```
-This plot shows depression per gender it's not that interesting and will
+This plot shows depression per gender it's not that interesting and will not bed added to the final app
 
 ```{r, Hexbin shows height and weight}
 
@@ -358,7 +366,7 @@ A hexbin plot is useful to represent the relationship of 2 numerical variables w
 
 
 ```{r, Hexbin shows height and weight plot 2}
-bin_alc<-hexbin(data_lifelines$AGE_T1, data_lifelines$A_SUM_T1, xbins=40)
+bin_alc<-hexbin(data_lifelines$AGE_T1, data_lifelines$A_SUM_T1, xbins=20)
 my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
 plot(bin_alc, 
      main = "This Hexbin shows height and weight",
@@ -368,6 +376,8 @@ plot(bin_alc,
      legend = FALSE)
 
 ```
+This hexbin isn't a really interesting plot in my opinion also because hexbins are hard to understand and it doesn't
+show something significant therefore it will not be in the final app.
 
 ```{r}
 bin_blp_t1<-hexbin(data_lifelines$WEIGHT_T1, data_lifelines$DBP_T1, xbins=40)
@@ -387,7 +397,7 @@ plot(bin_blp_t2,
 
 
 ```
-
+Here two hexbin's have been made and they show the DBP and WEIGHT on 2 different measuring moments. This is to see if there is a difference between them, in the second measuring moment it seems that the weight has increased but the outliers in the max DBP have gone down. In the first measuring moment there are two counts of 140 dbp that is incredibly high and dangerous.
 
 ```{r}
 data_sleepqual_dbp <- na.omit(data_lifelines)
@@ -397,27 +407,33 @@ ggplot(data_sleepqual_dbp, aes(x=factor(SLEEP_QUALITY), y=DBP_T1)) +
     ylab("DBP (mm hg)") +
     theme_minimal()
 ```
+This is a violin plot, A violin plot depicts distributions of numeric data for one or more groups using density curves. The width of each curve corresponds with the approximate frequency of data points in each region. This plot shows DBP for people who have a good sleep quality and people who have bad sleep quality. The plot shows that people that have a better sleep quality being 1 do have a generally lower dbp. This plot will be put in the app that would be interesting with the interactive filters.
 
 ```{r}
 
-ggplot(data_lifelines, aes(x=factor(FINANCE_T1), y=WEIGHT_T1)) + 
+ggplot(data_lifelines, aes(x=factor(FINANCE_T1), y=DBP_T1)) + 
     geom_boxplot() +
     xlab("Finance") +
     ylab("DBP (mm hg)") +
     theme_minimal()
 ```
+Here is a boxplot of dbp for each financial situation. the median show's average, the average is the lowest for people who have about 750 to spend and in financial situation 7 the meidan is the highest. Meaning more money makes the average DBP rise but it cannot be said for certain ofcourse because there are more factors to look at. 
 
 ```{r}
-ggplot(data_lifelines[!is.na(data_lifelines$SPORTS_T1) & !is.na(data_lifelines$DBP_T1), ], 
-       aes(x = factor(SPORTS_T1), y = DBP_T1)) +
-  geom_boxplot() +
-  xlab("Sports") +
-  ylab("DBP (mm hg)") +
-  theme_minimal()
+
+ggplot(data_lifelines, aes(x=!is.na(SPORTS_T1), y=DBP_T1)) + 
+    geom_boxplot() +
+    xlab("Participates in sports") +
+    ylab("Cholesterol (mmol/L)") +
+    theme_minimal()
 
 ```
+Here is a boxplot that show's the difference in cholesterol measured in mmol/L between people who do sports and people who don't do sports. there isn't a big difference but maybe with the filtering there could be an interesting result.
+
 ## 09-01-2025
+
 added some plotly interactive plots of the already static plots with the following code.
+Plotly makes ggplot interactive, this will me done by rendering the plot using ggplotly(plot).
 ```{r}
  p_age_count <- ggplot(data_lifelines, aes(x = AGE_T1, fill = factor(GENDER))) +
                 geom_bar() +
@@ -430,7 +446,7 @@ added some plotly interactive plots of the already static plots with the followi
             ggplotly(p_age_count)
 
 ```
-
+Here is an example of what a plot looks like when rendered with ggplotly. The user can now see the exact count and what gender this line represents. This will be implemented in the app. Making it so the user has a static and interactive plot he can interact with.
 
 ```{r}
 netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
@@ -443,6 +459,10 @@ tm_shape(selected_provinces) +
     tm_layout(title = "Selected Dutch Provinces") +
     tm_borders()
 ```
+I thought a fun way to show where the data came from i'd show the provices with this plot. This shows Friesland,
+Groningen and Drenthe. This map will be included in the FAQ.
+
+## 18-01-2025
 
 ```{r}
 ggplot(data_lifelines, aes(x=!is.na(SPORTS_T1), y=CHO_T1)) + 
@@ -451,6 +471,7 @@ ggplot(data_lifelines, aes(x=!is.na(SPORTS_T1), y=CHO_T1)) +
     ylab("Cholesterol (mmol/L)") +
     theme_minimal()
 ```
+Here is a boxplot that show's the difference in people who do and don't do sports and their cholesterol levels. It is generally known that playing sports could improve your general health. This might be interesting to show in the app.
 
 ```{r}
 ggplot(data_lifelines, aes(x=!is.na(SPORTS_T1), y=DBP_T1)) + 
@@ -459,43 +480,46 @@ ggplot(data_lifelines, aes(x=!is.na(SPORTS_T1), y=DBP_T1)) +
     ylab("DBP (mm hg)") +
     theme_minimal()
 ```
+Here is a boxplot that show's the difference in people who do and don't do sports and their DBP levels. It is known that playing sports could lower your bloodpressure in general. This might be interesting to show in the app. The filtering could pottentially show some interesting results.
 
-## CODE REVIEUW
+## 19-01-2025
+
+```{r}
+ggplot(data_lifelines, aes(x = DEPRESSION_T1, y = factor(FINANCE_T1), fill = FINANCE_T1)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+
+```
+This ridge plot shows the density distributions of depression scores (DEPRESSION_T1) across different financial levels (FINANCE_T1, grouped as 1–10). Each curve represents a financial group, with the shape and position indicating how depression scores are distributed within that group. A systematic shift or variation in the peaks suggests a potential relationship between financial status and depression, where higher financial levels might be associated with lower or more stable depression scores. The gradient color aids in distinguishing the groups visually. it seems that people in the financial group 4-5 have more people with depression then the higher financial situations. This could be due to multiple reasons like stress from not being able to afford stuff to high work stress to make enough money to get by.
+```{r}
+
+ggplot(data=data_lifelines, aes(x=NSES, group=factor(FINANCE_T1), fill=FINANCE_T1)) +
+    geom_density(adjust=1.5) +
+    facet_wrap(~FINANCE_T1) 
+```
+NSES = Neighborhood socio-economic status score according to CBS Statistics Netherlands, based on inhabitants’ educational level, income and job prospective. This  ridge plot shows the density distributions of NSES scores across different financial levels (FINANCE_T1, grouped as 1–10). Each curve represents a financial group, with the shape and position indicating how NSES scores are distributed within that group. A higher score meaning better neighborhood that could be good for people's mental and physical health. This plot will be interesting to show in the app.
+
+```{r}
+ggplot(data_lifelines, aes(x = BURNOUT_T1, y = factor(FINANCE_T1), fill = FINANCE_T1)) +
+  geom_density_ridges() +
+  theme_ridges() + 
+  theme(legend.position = "none")
+```
+This ridge plot shows the density distributions of burnout scores across different financial levels (FINANCE_T1, grouped as 1–10). Each curve represents a financial group, with the shape and position indicating how burnout scores are distributed within that group. Compared to the depression plot there arent any significant or less then significant peaks. For this reason it will not be interesting to show this plot.
+```{r}
+
+
+ggplot(data=data_lifelines, aes(x=SUMOFALCOHOL, group=factor(DEPRESSION_T1), fill=DEPRESSION_T1)) +
+    geom_density(adjust=1.5) +
+    facet_wrap(~DEPRESSION_T1) +
+    theme(legend.position = "none")
+
+```
+This ridge plot shows the density distributions of how much alcohol someone drinks a day in grams between people who and don't have depression. As of the basic filter it doesn't seem that there is a significant difference in alcohol consumption between people who do and don't have depression. There fore putting it in the app might not be very important but it could serve as a backup
 
 
 
-Introduction needs to be added to the logbook, this needs to include things like what this logbook will be about what the project is what catagories will be focussed on and why
-
-Remove unnescerary folders
-
-Explain what im doing and why.
-
-Further the analysis meaning the explenations with every graph
-
-Choose summary or describe - take the variabells out the datatable that arent intressting for this project
-
-Make a table of contents (This could be done with the rmarkdown header)
-
-Critical look at the results that come from the analysis and what is noticable from them and what is different from what was expected
-
-Use hexbin for the data weight and length - make sure a good explenation is present because it is a hartplot to understand
-
-Maybe put the postal codes in a sepperate file.
-
-Balloon plot - this plot could be usefull for the alcohol and finance showcase
-
-Chunk headers then it is easier to see where code fails and also figure numbers
-
-
-Library here usage for the path fix
-
-UTILS research
-
-### backend comments
-
-You can never overwrite the original data you always make a filtered copy
-
-subset from the data with the wanted catagories so the table isnt this big
 
 ## Plan for datadashboard
 
@@ -518,4 +542,6 @@ The plan for the datadashboard will be to make the user able to filter the data.
 
 i found that these catagories would be interesting at first, then i looked at the different graphs in the analysis above and it showed me that it's very important to have a good way to visualize these. That being said some stuff also appeared less intersting like bmi weight and height this is because almost every data about provinces shows this. Thus making it not that interesting. Smoking, depression burnout and sum of alcohol could be interesting though. This will show what province best is for example for the least stress in context of a burnout.
 
+## What actually got put in the data dashboard.
 
+The focus started to shift to more specialised, an intrest in DBP arose and factors that could influence into a heightend DBP. The reason for this focus is that DBP could go unnoticed for people who don't pay attention or a ignorant to the symptoms. a HIGH DBP can cause a clogged artery that could be blocked completly in case of a blood cloth this could cause a variety of isues sometimes being deadly like a heartattack, a vein could also tear causing other isues inclueding a aneurism. There for making people aware of felt like a good goal. All of these graphs in the app will have a direct or indirect relation to the DBP. 

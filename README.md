@@ -16,7 +16,7 @@ This project is a datadashboard based on data given by the Hanze UAS in collabir
 6.  [What plot's are in this dashboard?](#what-plots-are-in-this-dashboard)
 7.  [Authors](#authors)
 8.  [License](#license)
-9.  [Version History]
+9.  [Version History](#version-history)
 
 ## Background {#background}
 
@@ -118,7 +118,7 @@ Here is the first thing shown when you run the app. This shows the filtering opt
 
 ### Other options
 
-![Figure 4: other options and buttons](datadashboard/images/Other options.png){alt="Figure 10: other options and buttons"}
+![Figure 4: other options and buttons](datadashboard/images/Other_options.png){alt="Figure 10: other options and buttons"}
 
 -   Choose what you want to see
 

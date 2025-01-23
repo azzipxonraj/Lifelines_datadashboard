@@ -53,6 +53,7 @@ plot_weight_bp_interactive <- function(data) {
         theme_minimal()
 }
 
+# Finance and DBP plot 
 plot_finance_bp <- function(data) {
     ggplot(data, aes(x=factor(FINANCE_T1), y=WEIGHT_T1)) + 
         geom_boxplot() +
@@ -61,6 +62,7 @@ plot_finance_bp <- function(data) {
         theme_minimal()
 }
 
+# Sports and DBP plot
 plot_sports_dbp <- function(data){
     ggplot(data, aes(x=!is.na(SPORTS_T1), y=DBP_T1)) + 
         geom_boxplot() +
@@ -69,7 +71,8 @@ plot_sports_dbp <- function(data){
         theme_minimal()
 }
 
-plot_sports_glu <- function(data){
+#Sports and cholesterol plot
+plot_sports_cho <- function(data){
     ggplot(data, aes(x=!is.na(SPORTS_T1), y=CHO_T1)) + 
         geom_boxplot() +
         xlab("Participates in sports") +

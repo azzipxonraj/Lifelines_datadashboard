@@ -63,7 +63,7 @@ assign_province <- function(data, friesland_zipcodes, groningen_zipcodes, drenth
 }
 
 # Filter data based on user inputs
-filter_data <- function(data, provinces, gender, age_range, finance) {
+filter_data <- function(data, provinces, gender, age_range, finance, bmi_slider, weight_slider, height_slider) {
     
     # Filter by province
     if (!is.null(provinces) && length(provinces) > 0) {
@@ -78,10 +78,19 @@ filter_data <- function(data, provinces, gender, age_range, finance) {
     # Filter by age range
     data <- data %>% filter(AGE_T1 >= age_range[1] & AGE_T1 <= age_range[2])
     
+    data <- data %>% filter(BMI_T1 >= bmi_slider[1] & BMI_T1 <= bmi_slider[2])
+    
+    data <- data %>% filter(WEIGHT_T1 >= weight_slider[1] & WEIGHT_T1 <= weight_slider[2])
+    
+    data <- data %>% filter(HEIGHT_T1 >= height_slider[1] & HEIGHT_T1 <= height_slider[2])
+    
+    
+    
     # Filter by finance
     if (length(finance) != 0) {
         data <- data %>% filter(FINANCE_T1 == finance)
     }
     
+    #Voeg toe een BMI range ding
     return(data)
 }

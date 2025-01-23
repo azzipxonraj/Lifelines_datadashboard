@@ -52,18 +52,27 @@ fluidPage(
                             sliderInput( "age_slider", "Age Slider", min = 0, max = 100, 
                                 value = c(0, 100)),
                             
+                            sliderInput( "bmi_slider", "BMI slider", min = 15, max = 55, 
+                                         value = c(15, 55)),
+                            
+                            sliderInput( "weight_slider", "Weight slider (kg)", min = 40, max = 160, 
+                                         value = c(40, 160)),
+                            
+                            sliderInput( "height_slider", "Height slider (cm)", min = 135, max = 210, 
+                                         value = c(135, 210)),
+                            
                             selectizeInput("select_finance",
-                                           "Select Financial situation :",
-                                           list("Financial situation" = list("I do not know" = 1, 
+                                           "Select Financial situation (€) :",
+                                           list("Financial situation (€)" = list("I do not know" = 1, 
                                                            "I don't want to awnser" = 2, 
-                                                           "less then 750" = 3,
-                                                           "750-1000" = 4, 
-                                                           "1000-1500" = 5, 
-                                                           "1500-2000" = 6, 
-                                                           "2000-2500" = 7, 
-                                                           "2500-3000" = 8, 
-                                                           "3000-3500" = 9,
-                                                           "More then 3500" = 10
+                                                           "less then 750€" = 3,
+                                                           "750€-1000€" = 4, 
+                                                           "1000€-1500€" = 5, 
+                                                           "1500€-2000€" = 6, 
+                                                           "2000€-2500€" = 7, 
+                                                           "2500€-3000€" = 8, 
+                                                           "3000€-3500€" = 9,
+                                                           "More then 3500€" = 10
                                                            )),
                                            multiple = TRUE
                             ),
@@ -71,11 +80,16 @@ fluidPage(
                             
                             selectInput("info", "Choose what you want to see:", 
                                         choices = c("Participant's", "Sleep quality", "Weight and bloodpressure T1",
-                                                    "Finance and DBP", "NSES", "Alcohol consumption with depression")),
+                                                    "Finance and DBP", "NSES", "Alcohol consumption with depression",
+                                                    "Sports and cholesterol", "Sports and DBP")),
                             width = 2,
                             
                             h5("Download table"),
-                            downloadButton("downloadData", "Download")
+                            downloadButton("downloadData", "Download"),
+                            
+                            h5("Download current plot"),
+                            downloadButton("downloadPlot", "Download Plot")
+                            
                             
                         ),
                         

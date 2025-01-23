@@ -47,41 +47,15 @@ server <- function(input, output, session) {
             provinces = input$provinces,
             gender = input$gender,
             age_range = input$age_slider,
-            finance = input$select_finance
+            finance = input$select_finance,
+            bmi_slider = input$bmi_slider,
+            weight_slider = input$weight_slider,
+            height_slider = input$height_slider
         )
         
         return(data_filtered)
     })
     
-    output$main_plot <- renderPlot({
-        if (input$info == "Sleep quality") {
-            
-            ggplot(filtered_data(), aes(x = factor(SLEEP_QUALITY), y = DBP_T1, color = factor(SLEEP_QUALITY))) +
-                geom_quasirandom() +
-                xlab("Sleep quality") +
-                ylab("DBP (mm hg)") +
-                theme_minimal()
-            
-        } else if (input$info == "Participant's") {
-            
-            ggplot(filtered_data(), aes(x = AGE_T1, fill = factor(GENDER))) +
-                geom_bar() +
-                ylab("Count of People") +
-                xlab("Age") +
-                labs(fill = "Gender (1 = Male, 2 = Female)") +
-                theme_minimal() +
-                coord_flip()
-                
-        } else if (input$info == "Weight and bloodpressure T1") {
-            
-            bin_blp_t1<-hexbin(filtered_data()$WEIGHT_T1, filtered_data()$DBP_T1, xbins=40)
-            my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
-            plot(bin_blp_t1, 
-                 xlab = "Weight (kg)",
-                 ylab = "DBP (mm hg)",
-                 colramp = my_colors)
-        }
-    })
 
 
     output$main_plot <- renderPlot({
@@ -97,7 +71,10 @@ server <- function(input, output, session) {
             plot_NSES(filtered_data())
         } else if (input$info == "Alcohol consumption with depression") {
             plot_alc_depression(filtered_data())
-            
+        } else if (input$info == "Sports and cholesterol") {
+            plot_sports_glu(filtered_data())
+        } else if (input$info == "Sports and DBP") {
+            plot_sports_dbp(filtered_data())
         }
     })
     
@@ -114,7 +91,10 @@ server <- function(input, output, session) {
             ggplotly(plot_NSES(filtered_data()))
         } else if (input$info == "Alcohol consumption with depression") {
             ggplotly(plot_alc_depression(filtered_data()))
-            
+        } else if (input$info == "Sports and cholesterol") {
+            ggplotly(plot_sports_glu(filtered_data()))
+        } else if (input$info == "Sports and DBP") {
+            ggplotly(plot_sports_dbp(filtered_data()))
         }
     })
     
@@ -129,6 +109,37 @@ server <- function(input, output, session) {
             write.csv(filtered_data(), file, row.names = FALSE) 
         }
     )
+    
+    output$downloadPlot <- downloadHandler(
+        filename = function() {
+            paste(input$info, "-plot-", Sys.Date(), ".png", sep = "")
+        },
+        content = function(file) {
+            plot_to_save <- NULL
+            
+            # Match the current plot
+            if (input$info == "Sleep quality") {
+                plot_to_save <- plot_sleep_quality(filtered_data())
+            } else if (input$info == "Participant's") {
+                plot_to_save <- plot_participants(filtered_data())
+            } else if (input$info == "Weight and bloodpressure T1") {
+                plot_to_save <- plot_weight_bp_interactive(filtered_data())
+            } else if (input$info == "Finance and DBP") {
+                plot_to_save <- plot_finance_bp(filtered_data())
+            } else if (input$info == "NSES") {
+                plot_to_save <- plot_NSES(filtered_data())
+            } else if (input$info == "Alcohol consumption with depression") {
+                plot_to_save <- plot_alc_depression(filtered_data())
+            }
+            
+            # Save the plot using ggsave
+            if (!is.null(plot_to_save)) {
+                ggsave(file, plot = plot_to_save, device = "png", width = 8, height = 6)
+            }
+        }
+    )
+
+
     
     output$map <- renderTmap({
         netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")

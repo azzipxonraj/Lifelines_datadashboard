@@ -8,14 +8,15 @@ This project is a datadashboard based on data given by the Hanze UAS in collabir
 
 ## Table of contents
 
-1.  [Background]
-2.  [How to use this app]
-3.  [Libraries]
+1.  [Background](#background)
+2.  [How to use this app](#how-to-use-this-app)
+3.  [Libraries](#libraries)
 4.  [What do you see?](#what-do-you-see)
-5.  [What plot's are in this dashboard?]
-6.  [Authors]
-7.  [License]
-8.  [Acknowledgments]
+5.  [Filter options](#filter-options)
+6.  [What plot's are in this dashboard?](#what-plots-are-in-this-dashboard)
+7.  [Authors](#authors)
+8.  [License](#license)
+9.  [Version History]
 
 ## Background {#background}
 
@@ -83,7 +84,7 @@ There is also a page that explains Frequently Asked Questions
 
 Here is the first thing shown when you run the app. This shows the filtering options, the different tabs with the non-interactive and interactive plot, the summary (text explenation) and the table.
 
-### Filter options
+### Filter options {#filter-options}
 
 ![Figure 3: Filter options](images/Filter_options.png){alt="Figure 7: Filter options" width="200"}
 
@@ -117,7 +118,7 @@ Here is the first thing shown when you run the app. This shows the filtering opt
 
 ### Other options
 
-![Figure 4: other options and buttons](images/Other options.png){alt="Figure 10: other options and buttons" width="348"}
+![Figure 4: other options and buttons](datadashboard/images/Other options.png){alt="Figure 10: other options and buttons"}
 
 -   Choose what you want to see
 
@@ -131,7 +132,7 @@ Here is the first thing shown when you run the app. This shows the filtering opt
 
     -   This button gives the user the option to download the current plot that is shown with it's filters. This can give the user the option to compare his made plot to someone of another user or the plot's in the readme/FAQ
 
-### What plot's are in this dashboard? {#results}
+### What plot's are in this dashboard? {#what-plots-are-in-this-dashboard}
 
 **The graphs**
 

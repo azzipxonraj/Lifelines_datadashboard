@@ -80,6 +80,7 @@ plot_sports_cho <- function(data){
         theme_minimal()
 }
 
+#This plot shows the Neighborhood socio-economic status score
 plot_NSES <- function(data){
     ggplot(data, aes(x=factor(FINANCE_T1), y=NSES)) + 
         geom_boxplot() +
@@ -88,6 +89,7 @@ plot_NSES <- function(data){
         theme_minimal()
 }
 
+#This plot shows the relation between alcohol and depression
 plot_alc_depression <- function(data){
     ggplot(data=data, aes(x=SUMOFALCOHOL, group=factor(DEPRESSION_T1), fill=DEPRESSION_T1)) +
         geom_density(adjust=1.5) +

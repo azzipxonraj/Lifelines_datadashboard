@@ -57,7 +57,7 @@ server <- function(input, output, session) {
     })
     
 
-
+    # Here the if statement checks if the input$info matches any of the given options then displays that plot
     output$main_plot <- renderPlot({
         if (input$info == "Sleep quality") {
             plot_sleep_quality(filtered_data())
@@ -78,6 +78,8 @@ server <- function(input, output, session) {
         }
     })
     
+    # Here the if statement checks if the input$info matches any of the given options 
+    #then displays that plot but it's the interactive plot
     output$barPlot <- renderPlotly({
         if (input$info == "Sleep quality") {
             ggplotly(plot_sleep_quality(filtered_data()))
@@ -110,6 +112,8 @@ server <- function(input, output, session) {
         }
     )
     
+    
+    #Here the download handler that handles the plot download. it has presets that could be changed by the user
     output$downloadPlot <- downloadHandler(
         filename = function() {
             paste(input$info, "-plot-", Sys.Date(), ".png", sep = "")
@@ -117,7 +121,7 @@ server <- function(input, output, session) {
         content = function(file) {
             plot_to_save <- NULL
             
-            # Match the current plot
+            # this checks what plot is currently being used so it can export the correct one
             if (input$info == "Sleep quality") {
                 plot_to_save <- plot_sleep_quality(filtered_data())
             } else if (input$info == "Participant's") {
@@ -140,13 +144,15 @@ server <- function(input, output, session) {
     )
 
 
-    
+    # Here tmap looks in rnaturalearth, see's what country it needs to render
     output$map <- renderTmap({
         netherlands <- rnaturalearth::ne_states(country = "Netherlands", returnclass = "sf")
         
+        #here i select what provinces from the netherlands that need to be shows
         selected_provinces <- netherlands %>%
             filter(name %in% c("Groningen", "Friesland", "Drenthe"))
         
+        #here how it should be shown is decided
         tm_shape(selected_provinces) +
             tm_polygons(col = "name", title = "Province", border.col = "black") +
             tm_borders()

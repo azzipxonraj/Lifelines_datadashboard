@@ -1,10 +1,8 @@
 # Datadashboard Lifelines Lifestyles
 
-This project presents an interactive data dashboard based on exploratory data analysis using data from [LifeLines](https://www.lifelines.nl). The dashboard explores correlations between lifestyle factors such as sleep quality and weight, and diastolic blood pressure (DBP). These factors were chosen because they are often manageable through personal lifestyle changes or medical intervention. High blood pressure is a critical health concern due to its role in conditions like atherosclerosis, strokes, and heart attacks.
+### Abstract
 
-The dashboard includes three main visualizations: participant distribution, sleep quality, and weight in relation to blood pressure. Users can explore both interactive and non-interactive plots, apply filters for province, gender, and age group, and access additional tabs for explanations, FAQs, and contact information. This functionality enables users to discover insights that could benefit public health understanding.
-
-This project is a datadashboard based on data given by the Hanze UAS in collabiration with the [LifeLines](https://www.lifelines.nl) project. After a exploratory data analysis some ineresting data has came forward that have been made into some plots. DBP - diastolic blood pressure was one of the main point's of focus in this project. Some lifestyle factors have been chosen that could have influence on the DBP these factors are sleep quality, weight, height, NSES (Neighborhood socio-economic status score) and cholesterol. This datadashboard has 2 types of plots to show this, a static-plot and a interactive version of the static-plot. This datadashboard also has a reactive filter that can change the graphs live, this filter is explained fully in
+This project is a datadashboard based on data given by the Hanze UAS in collabiration with the [LifeLines](https://www.lifelines.nl) project. After a exploratory data analysis some ineresting data has came forward that have been made into some plots. DBP - diastolic blood pressure was one of the main point's of focus in this project. Some lifestyle factors have been chosen that could have influence on the DBP these factors are sleep quality, weight, height, NSES (Neighborhood socio-economic status score) and cholesterol. This datadashboard has 2 types of plots to show this, a static-plot and a interactive version of the static-plot. This datadashboard also has a reactive filter that can change the graphs live, this filter is explained fully in the faq. So the user fully understands each plot a FAQ markdown has been made that explains how and what each plot is plus what is contains for data on the x- and y-axis
 
 ## Table of contents
 
@@ -31,6 +29,14 @@ Seen in this figure is the progression of atherosclerosis, it will start slow an
 ### How to use this app {#how-to-use-this-app}
 
 -   R version 4.4.1 (2024-06-14)
+
+Due to the usage of the "Here" library the user has to change the path in server.R to their own dataset path a shown below
+
+```{r}
+#located in server.R file
+file_path <- here("Documents/Dataset", "Name of dataset")  
+
+```
 
 #### Libraries {#libraries}
 
@@ -191,3 +197,7 @@ This project is licensed under the [MIT License](LICENSE).\
 Feel free to use, modify, and distribute this project under the terms of the license.
 
 ## Acknowledgments
+
+Hanze UAS - for the assignment
+
+Lifelines - for the dataset

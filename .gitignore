@@ -49,7 +49,8 @@ po/*~
 rsconnect/
 
 # Data folder
-lifelines_2024/
+lifelines_data/
+lifelines_data/Dataset/
 
 #MacOS Files
 .DS_Store≈
